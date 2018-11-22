@@ -12,7 +12,3 @@ export class DelegateModel{
         return this;
     }
 }
-(function () {
-    if (this.value == null || this.value === '')
-        return {result:false,message:'این فیلد اجباری است'};
-})()
