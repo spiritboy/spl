@@ -7,7 +7,7 @@
             </ul>
         </div>
         <div class="col-md-9">
-            <GroupComponent v-bind:group-item="selectedGroup"></GroupComponent>
+            <GroupComponent v-bind:group-model="selectedGroup"></GroupComponent>
         </div>
     </div>
 </template>

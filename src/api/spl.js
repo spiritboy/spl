@@ -1,30 +1,89 @@
-import {Group} from "@/models/group";
-import {Question} from "@/models/question";
-import {Menu} from "@/models/menu";
+import {GroupModel} from "@/models/GroupModel";
+import {QuestionModel} from "@/models/QuestionModel";
+import {MenuModel} from "@/models/MenuModel";
 
 export class spl {
     static menu(menuId) {
-        let menu = new Menu()
-        menu.title = 'اطلاعات پرسنلی';
-        let group1 = new Group();
-        group1.title = 'اطلاعات خانواگی';
-        group1.questions = [
-            new Question('نام'),
-            new Question('فامیل'),
-            new Question('تاریخ تولد'),
-            new Question('آدرس'),
-        ];
-
-        let group2 = new Group();
-        group2.title = 'اطلاعات سازمانی';
-        group2.questions = [
-            new Question('محل'),
-            new Question('سمت'),
-            new Question('قرارداد'),
-        ];
-
-        menu.groups.push(group1);
-        menu.groups.push(group2);
+        var m =
+            {
+                title:'منوی افراد',
+                groups:[
+                    {
+                        title:'اطلاعات اولیه',
+                        questions:[
+                            {
+                                title: 'نام',
+                                fieldInfo:{
+                                    name:'text',
+                                    style:null,
+                                    mask:''
+                                },
+                                validation:{
+                                    script:'abc'
+                                }
+                            },{
+                                title: 'فامیل',
+                                fieldInfo:{
+                                    name:'text',
+                                    style:null,
+                                    mask:''
+                                },
+                                validation:{
+                                    script:'abc'
+                                }
+                            },{
+                                title: 'تولد',
+                                fieldInfo:{
+                                    name:'date',
+                                    style:null,
+                                    mask:''
+                                },
+                                validation:{
+                                    script:'abc'
+                                }
+                            },{
+                                title: 'محل تولد',
+                                fieldInfo:{
+                                    name:'select',
+                                    style:null,
+                                    mask:''
+                                },
+                                validation:{
+                                    script:'abc'
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        title:'اطلاعات پرسنلی',
+                        questions:[
+                            {
+                                title: 'شماره پرسنلی',
+                                fieldInfo:{
+                                    name:'text',
+                                    style:null,
+                                    mask:''
+                                },
+                                validation:{
+                                    script:'abc'
+                                }
+                            },{
+                                title: 'سمت',
+                                fieldInfo:{
+                                    name:'text',
+                                    style:null,
+                                    mask:''
+                                },
+                                validation:{
+                                    script:'abc'
+                                }
+                            }
+                        ]
+                    }
+                ]
+            };
+        let menu = new MenuModel().deserialize(m);
+        menu.init();
         return menu;
     }
 
