@@ -4,7 +4,8 @@
     <hr/>
     <form class="inline-form">
       <div class="form-row">
-        <div class="form-group col-md-3" v-if="groupValue.groupModel!=null" v-for="qv in groupValue.questionValues">
+        <div class="form-group col-md-3" v-if="groupValue.groupModel!=null"
+             v-for="qv in groupValue.questionValues">
             <TextComponent v-if="qv.questionModel.fieldInfo.name === 'text'" v-bind:question-value="qv"/>
             <DateComponent v-else-if="qv.questionModel.fieldInfo.name === 'date'" v-bind:question-value="qv"/>
             <SelectComponent v-else-if="qv.questionModel.fieldInfo.name === 'select'" v-bind:question-value="qv"/>
