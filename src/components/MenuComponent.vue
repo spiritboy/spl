@@ -1,5 +1,5 @@
 <template>
-    <div class="container row">
+    <div v-if="menu!=null" class="container row">
         <div class="col-md-3">
             <h1>{{menu.title}}</h1>
             <ul>
@@ -20,11 +20,16 @@
     import GroupComponent from "./GroupComponent";
     import GroupTableComponent from "./GroupTableComponent";
     import {spl} from "@/api/spl";
+    import {MenuModel} from "@/models/MenuModel";
 
     let context = {
-        menu: new spl.menu(1),
+        menu: null,
         selectedGroup: null
     };
+    spl.menu(1).then(function(response){
+        context.menu = new MenuModel().deserialize(response.data);
+        context.menu.init();
+    })
 
     export default {
         name: 'MenuComponent',
