@@ -1,20 +1,24 @@
-import {GroupModel} from "@/models/GroupModel";
+import {CategoryModel} from "@/models/CategoryModel";
 
 export class MenuModel {
     constructor() {
+        this.id = "";
         this.title = "";
-        this.groups = []
+        this.categories = [];
     }
-    init(){
-        for(let g of this.groups)
-            g.init();
+
+    init() {
+        for (let c of this.categories)
+            c.init();
     }
-    deserialize(input){
-        if(input == null)
+
+    deserialize(input) {
+        if (input == null)
             return null;
+        this.id = input.id;
         this.title = input.title;
-        for(let g of input.groups)
-            this.groups.push(new GroupModel().deserialize(g));
+        for (let c of input.categories)
+            this.categories.push(new CategoryModel().deserialize(c));
         return this;
     }
 }

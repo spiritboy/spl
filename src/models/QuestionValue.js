@@ -3,5 +3,8 @@ export class QuestionValue{
         this.value = '';
         this.oldValue = '';
         this.questionModel = questionModel;//QuestionModel
+
+        this.focus = null;
     }
+
 }

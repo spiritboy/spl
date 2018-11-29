@@ -12,8 +12,13 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="groupValue in groupModel.groupValues">
-                <td v-for="questionValue in groupValue.questionValues">{{questionValue.value}}</td>
+            <tr v-bind:key="groupValue.id" v-for="groupValue in groupModel.groupValues">
+                <td v-for="questionValue in groupValue.questionValues">
+                    <div v-if="Array.isArray(questionValue.value)">
+                        <span class="badge badge-primary" v-for="qv_ in questionValue.value" style="margin: 0 2px">{{qv_}}</span>
+                    </div>
+                    <div v-else>{{questionValue.value}}</div>
+                </td>
                 <td>
                     <a href="#" class="button edit"><i class="fa fa-edit" @click="editClicked(groupValue)"></i></a>
                     <a href="#" class="button remove"><i class="fa fa-times" @click="deleteClicked(groupValue)"></i></a>
@@ -21,7 +26,7 @@
             </tr>
             </tbody>
         </table>
-        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" ref="modal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -30,9 +35,15 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" @keyup.enter="addAndNew">
+
                         <GroupComponent v-if="editingGroupValue!=null" v-bind:group-value="editingGroupValue"/>
+                        <button type="button" class="btn btn-primary" @click="addAndNew">
+                            <i class="fa fa-plus"></i>
+                        </button>
+
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>
                         </button>
@@ -46,12 +57,13 @@
 </template>
 
 <script>
-    import GroupComponent from "@/components/GroupComponent";
+    import GroupComponent from "@/components/group/GroupComponent";
     import {GroupValue} from "@/models/GroupValue";
+    import GroupTableDetailsComponent from "@/components/group/GroupTableViewComponent";
 
     export default {
-        components: {GroupComponent},
-        props: ["groupModel"],
+        components: {GroupTableDetailsComponent, GroupComponent},
+        props: ["groupModel", "isDetails"],
         name: "GroupTableComponent",
         data: function () {
             return {
@@ -59,24 +71,33 @@
             }
         },
         methods: {
-            btnAddClick: function () {
+            btnAddClick() {
                 //open modal GroupComponent
                 let groupValue = new GroupValue(this.groupModel);
                 this.editingGroupValue = groupValue;
-                $('.modal').modal('show');
+                $(this.$refs.modal).modal('show');
             },
-            popUpOkClicked: function () {
+            popUpOkClicked() {
                 if (this.groupModel.groupValues.indexOf(this.editingGroupValue) === -1)
+                //add
                     this.groupModel.groupValues.push(this.editingGroupValue);
                 this.editingGroupValue = null;
-                $('.modal').modal('hide');
+                $(this.$refs.modal).modal('hide');
             },
-            editClicked: function (groupValue) {
+            editClicked(groupValue) {
                 this.editingGroupValue = groupValue;
-                $('.modal').modal('show');
+                $(this.$refs.modal).modal('show');
             },
-            deleteClicked: function (groupValue) {
-                this.groupModel.groupValues.splice(this.groupModel.groupValues.indexOf(groupValue),1);
+            deleteClicked(groupValue) {
+                this.groupModel.groupValues.splice(this.groupModel.groupValues.indexOf(groupValue), 1);
+            },
+            addAndNew() {
+                if (this.groupModel.groupValues.indexOf(this.editingGroupValue) === -1)
+                //add
+                    this.groupModel.groupValues.push(this.editingGroupValue);
+                this.editingGroupValue.questionValues[0].focus();
+                this.editingGroupValue = new GroupValue(this.groupModel);
+
             }
         }
     }
@@ -90,12 +111,15 @@
     .btn {
         margin: 3px;
     }
-    .button{
-        margin:3px;
+
+    .button {
+        margin: 3px;
     }
-    .remove{
-        color:red;
+
+    .remove {
+        color: red;
     }
-    .edit{
+
+    .edit {
     }
 </style>

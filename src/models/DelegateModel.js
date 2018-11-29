@@ -1,6 +1,7 @@
 export class DelegateModel{
     constructor(){
         this.script='';
+
     }
     exec(){
         return eval(this.script);

@@ -4,6 +4,7 @@ import {GroupInfoModel} from "@/models/GroupInfoModel";
 
 export class GroupModel {
     constructor() {
+        this.id = '';
         this.title = '';
         this.groupInfo = null;//GroupInfoModel
         this.questions = [];//Question[]
@@ -20,6 +21,7 @@ export class GroupModel {
     deserialize(input) {
         if (input == null)
             return null;
+        this.id = input.id;
         this.title = input.title;
         this.groupInfo = new GroupInfoModel().deserialize(input.groupInfo);
         for (let q of input.questions)

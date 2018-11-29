@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "jquery.maskedinput": "^1.4.1",
+    "select2": "^4.0.6-rc.0"
+  }
 }
