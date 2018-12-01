@@ -10,9 +10,10 @@
 </template>
 
 <script>
+    import _BaseComponent from "@/components/fieldComponents/_BaseComponent"
     export default {
-        props: ["questionValue"],
         name: "SelectComponent",
+        extends:_BaseComponent,
         computed: {
             options: function () {
                 return this.questionValue.questionModel.fieldInfo.source.getSources()

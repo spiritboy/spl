@@ -1,10 +1,10 @@
-export class QuestionValue{
-    constructor(questionModel){
+import {EventEmitter} from "@/models/helper/EventEmitter";
+
+export class QuestionValue {
+    constructor(questionModel) {
         this.value = '';
         this.oldValue = '';
         this.questionModel = questionModel;//QuestionModel
-
-        this.focus = null;
+        this.events = new EventEmitter();
     }
-
 }

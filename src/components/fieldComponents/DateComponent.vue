@@ -6,10 +6,11 @@
 </template>
 
 <script>
+    import _BaseComponent from "@/components/fieldComponents/_BaseComponent"
     let dPicker = null;
     export default {
-        props: ["questionValue"],
         name: "DateComponent",
+        extends:_BaseComponent,
         mounted: function () {
             $(this.$refs.el).on('keypress', (function (event) {
                 //## we will add '/' character on user keypress, ex: user type: 1397 =>changes to=> 1397/

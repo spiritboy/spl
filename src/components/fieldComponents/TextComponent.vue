@@ -6,15 +6,10 @@
 </template>
 
 <script>
+    import _BaseComponent from "@/components/fieldComponents/_BaseComponent"
     export default {
-        props:["questionValue"],
         name: "TextComponent",
-        mounted(){
-            this.questionValue.focus = (function(){
-                console.log(this.$refs.el)
-                this.$refs.el.focus();
-            }).bind(this);
-        }
+        extends:_BaseComponent
     }
 </script>
 

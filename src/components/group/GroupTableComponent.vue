@@ -95,7 +95,7 @@
                 if (this.groupModel.groupValues.indexOf(this.editingGroupValue) === -1)
                 //add
                     this.groupModel.groupValues.push(this.editingGroupValue);
-                this.editingGroupValue.questionValues[0].focus();
+                this.editingGroupValue.questionValues[1].events.emit('focus');
                 this.editingGroupValue = new GroupValue(this.groupModel);
 
             }
