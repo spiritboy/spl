@@ -3,7 +3,8 @@ import {GroupValue} from "@/models/GroupValue";
 import {GroupInfoModel} from "@/models/GroupInfoModel";
 
 export class GroupModel {
-    constructor() {
+    constructor(parentCategory) {
+        this.parentCategory = parentCategory;
         this.id = '';
         this.title = '';
         this.groupInfo = null;//GroupInfoModel
@@ -25,7 +26,7 @@ export class GroupModel {
         this.title = input.title;
         this.groupInfo = new GroupInfoModel().deserialize(input.groupInfo);
         for (let q of input.questions)
-            this.questions.push(new QuestionModel().deserialize(q));
+            this.questions.push(new QuestionModel(this).deserialize(q));
         return this;
     }
 }

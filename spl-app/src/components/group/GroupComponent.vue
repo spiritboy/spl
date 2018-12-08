@@ -5,15 +5,15 @@
         <form class="inline-form">
             <div class="form-row">
                 <div class="form-group col-md-3" v-if="groupValue.groupModel!=null"
-                     v-bind:key="groupValue.id"  v-for="qv in groupValue.questionValues">
-                    <TextComponent v-if="qv.questionModel.fieldInfo.name === 'text'" v-bind:question-value="qv"/>
-                    <DateComponent v-else-if="qv.questionModel.fieldInfo.name === 'date'" v-bind:question-value="qv"/>
+                     v-bind:key="groupValue.id" v-for="qv in groupValue.questionValues">
+                    <TextComponent v-if="qv.questionModel.fieldInfo.name === 'text'" v-bind:question-value="qv" :key="getKey(qv.questionModel)"/>
+                    <DateComponent v-else-if="qv.questionModel.fieldInfo.name === 'date'" v-bind:question-value="qv" :key="getKey(qv.questionModel)"/>
                     <SelectComponent v-else-if="qv.questionModel.fieldInfo.name === 'select'"
-                                     v-bind:question-value="qv"/>
+                                     v-bind:question-value="qv" :key="getKey(qv.questionModel)"/>
                 </div>
             </div>
             <!--<div class="form-row">-->
-                <!--<button class="btn btn-success" v-on:click.prevent="save()">+</button>-->
+            <!--<button class="btn btn-success" v-on:click.prevent="save()">+</button>-->
             <!--</div>-->
         </form>
     </div>
@@ -34,6 +34,11 @@
                 for (let q of this.groupValue.questionValues) {
                     console.log(q.value);
                 }
+            },
+            getKey(question) {
+                return question.parentGroup.parentCategory.id +
+                    question.parentGroup.id +
+                    question.id;
             }
         }
     }

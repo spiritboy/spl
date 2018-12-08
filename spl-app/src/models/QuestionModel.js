@@ -5,7 +5,8 @@ import {SelectFieldInfoModel} from "@/models/FieldInfo/SelectFieldInfoModel";
 import {DateFieldInfoModel} from "@/models/FieldInfo/DateFieldInfoModel";
 
 export class QuestionModel {
-    constructor() {
+    constructor(parentGroup) {
+        this.parentGroup = parentGroup;
         this.id = '';
         this.title = '';
         this.fieldInfo = null;//FieldInfoModel
@@ -22,11 +23,11 @@ export class QuestionModel {
         this.id = input.id;
         this.title = input.title;
         if (input.fieldInfo.name === 'text')
-            this.fieldInfo = new TextFieldInfoModel().deserialize(input.fieldInfo);
+            this.fieldInfo = new TextFieldInfoModel(this).deserialize(input.fieldInfo);
         else if (input.fieldInfo.name === 'date')
-            this.fieldInfo = new DateFieldInfoModel().deserialize(input.fieldInfo);
+            this.fieldInfo = new DateFieldInfoModel(this).deserialize(input.fieldInfo);
         else if (input.fieldInfo.name === 'select')
-            this.fieldInfo = new SelectFieldInfoModel().deserialize(input.fieldInfo);
+            this.fieldInfo = new SelectFieldInfoModel(this).deserialize(input.fieldInfo);
         this.validation = new DelegateModel().deserialize(input.validation);
         this.exitted = new DelegateModel().deserialize(input.exitted);
         this.exitting = new DelegateModel().deserialize(input.exitting);

@@ -14,7 +14,8 @@
 
     let context = {menu: null,isDetails:true};
     spl.menu(1).then(function (response) {
-        context.menu = new MenuModel().deserialize(response.data);
+        context.menu = new MenuModel().deserialize(response.data.menu);
+        console.log(response.data.menu)
         context.menu.init();
     });
     export default {

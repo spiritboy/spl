@@ -1,8 +1,8 @@
 import {FieldInfoModel} from "@/models/FieldInfo/FieldInfoModel";
 
 export class DateFieldInfoModel extends FieldInfoModel {
-    constructor() {
-        super();
+    constructor(parentQuestion) {
+        super(parentQuestion);
         this.format = 'yyy-mm-dd';
     }
 

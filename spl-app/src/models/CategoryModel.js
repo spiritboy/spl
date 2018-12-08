@@ -1,7 +1,8 @@
 import {GroupModel} from "@/models/GroupModel";
 
 export class CategoryModel {
-    constructor() {
+    constructor(parentMenu) {
+        this.parentMenu = parentMenu;
         this.id = "";
         this.title = "";
         this.groups = [];
@@ -18,7 +19,7 @@ export class CategoryModel {
         this.id = input.id;
         this.title = input.title;
         for (let g of input.groups)
-            this.groups.push(new GroupModel().deserialize(g));
+            this.groups.push(new GroupModel(this).deserialize(g));
         return this;
     }
 }

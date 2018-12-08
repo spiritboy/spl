@@ -1,8 +1,8 @@
 import {FieldInfoModel} from "@/models/FieldInfo/FieldInfoModel";
 
 export class TextFieldInfoModel extends FieldInfoModel {
-    constructor() {
-        super();
+    constructor(parentQuestion) {
+        super(parentQuestion);
         this.mask = '';
     }
     deserialize(input){

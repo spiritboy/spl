@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label class="control-label">{{questionValue.questionModel.title}}</label>
+        <label class="control-label" :title="this.questionValue.questionModel.fieldInfo.source.script">{{questionValue.questionModel.title}}</label>
         <select class="form-control" v-model="questionValue.value" ref="el" v-selecttwo>
             <option v-for="option in options"
                     :value="option.id">{{option.name}}
@@ -14,9 +14,9 @@
     export default {
         name: "SelectComponent",
         extends:_BaseComponent,
-        computed: {
-            options: function () {
-                return this.questionValue.questionModel.fieldInfo.source.getSources()
+        data(){
+            return{
+                options:[]
             }
         },
         mounted: function () {
@@ -27,6 +27,10 @@
             });
             //set the initial value
             $(this.$refs.el).val(this.questionValue.value).trigger("change");
+
+            this.questionValue.questionModel.fieldInfo.source.getSources((function(d){
+                this.options = d;
+            }).bind(this))
         },
         directives: {
             selecttwo: {

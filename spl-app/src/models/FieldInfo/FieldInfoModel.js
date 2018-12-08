@@ -1,6 +1,7 @@
 export class FieldInfoModel {
-    constructor() {
+    constructor(parentQuestion) {
         this.name = '';
+        this.parentQuestion = parentQuestion;
         this.style = {};
     }
     deserialize(input){

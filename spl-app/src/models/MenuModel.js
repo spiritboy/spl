@@ -18,7 +18,7 @@ export class MenuModel {
         this.id = input.id;
         this.title = input.title;
         for (let c of input.categories)
-            this.categories.push(new CategoryModel().deserialize(c));
+            this.categories.push(new CategoryModel(this).deserialize(c));
         return this;
     }
 }
