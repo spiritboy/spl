@@ -59,7 +59,7 @@
 <script>
     import GroupComponent from "@/components/group/GroupComponent";
     import {GroupValue} from "@/models/GroupValue";
-    import GroupTableDetailsComponent from "@/components/group/GroupTableViewComponent";
+    import GroupTableDetailsComponent from "@/components/group/view/GroupTableViewComponent";
 
     export default {
         components: {GroupTableDetailsComponent, GroupComponent},

@@ -3,6 +3,7 @@ import {DelegateModel} from "@/models/DelegateModel";
 import {TextFieldInfoModel} from "@/models/FieldInfo/TextFieldInfoModel";
 import {SelectFieldInfoModel} from "@/models/FieldInfo/SelectFieldInfoModel";
 import {DateFieldInfoModel} from "@/models/FieldInfo/DateFieldInfoModel";
+import {QuestionValidationModel} from "./QuestionValidationModel";
 
 export class QuestionModel {
     constructor(parentGroup) {
@@ -17,6 +18,7 @@ export class QuestionModel {
         this.entering = null;//DelegateModel
         this.changed = null;//DelegateModel
         this.changing = null;//DelegateModel
+        this.validation = null;
     }
 
     deserialize(input) {
@@ -35,6 +37,7 @@ export class QuestionModel {
         this.entering = new DelegateModel().deserialize(input.entering);
         this.changed = new DelegateModel().deserialize(input.changed);
         this.changing = new DelegateModel().deserialize(input.changing);
+        this.validation = new QuestionValidationModel(this).deserialize(input.validation);
         return this;
     }
 }

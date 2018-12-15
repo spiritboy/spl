@@ -100,7 +100,8 @@
                                            style="border:1px solid lightgray;padding: 3px;"
                                            :options="{group:{name:'operands',  pull:'clone', put:false}}">
                                     <div v-for="(condition,i) in briefOrders">
-                                        {{condition.text}}
+                                        <span style="cursor: pointer;"
+                                              :class="{'badge badge-info':condition.type === 'operator','badge badge-warning':condition.type !== 'operator'}">{{condition.text}}</span>
                                     </div>
                                 </draggable>
                             </div>
@@ -157,23 +158,20 @@
                 let briefOrders = this.briefConditions.map((cond, i) => {
                     return {value: i + 1, text: cond}
                 });
-                briefOrders.push({value: '(', text: '('});
-                briefOrders.push({value: ')', text: ')'});
-                briefOrders.push({value: '&&', text: '&&'});
-                briefOrders.push({value: '||', text: '||'});
+                briefOrders.push({value: '(', text: '(', type: 'operator'});
+                briefOrders.push({value: ')', text: ')', type: 'operator'});
+                briefOrders.push({value: '&&', text: '&&', type: 'operator'});
+                briefOrders.push({value: '||', text: '||', type: 'operator'});
                 return briefOrders;
             },
             briefCommands: function () {
-
                 let bCmd = [];
                 for (let cmd of this.conditionGroup.commands) {
                     bCmd.push({
-                        display: (cmd.question ? cmd.question.title : '') + ' ' +
-                            this.getCommandName(cmd)
-                            + (cmd.value ? global.findStep(cmd.value).title : '') + ' ',
+                        display:
+                            this.getCommandSentence(cmd),
                         cmd: cmd
-                    })
-                    ;
+                    });
                 }
                 return bCmd;
             }
@@ -253,9 +251,9 @@
                     let temp = this.briefConditions.map((cond, i) => {
                         return {value: i + 1, text: cond}
                     });
-                    for(let cond of temp){
+                    for (let cond of temp) {
                         this.conditionOrder.push(cond);
-                        this.conditionOrder.push({text:'||',value:'||'});
+                        this.conditionOrder.push({text: '||', value: '||'});
                     }
                     this.conditionOrder.pop();
 
@@ -272,6 +270,29 @@
                         return 'حذف';
                     case "Finish":
                         return 'پایان';
+                    case "Message":
+                        return 'پیام';
+                    default:
+                        return '';
+                }
+            },
+            getCommandSentence(cmd) {
+                let display = '';
+                let questionName = cmd.question != null ? cmd.question.title : '';
+                let commandName = this.getCommandName(cmd);
+                let step = cmd.value != null && cmd.name === 'GotoStep' ? global.findStep(cmd.value) : null;
+                let stepName = step != null ? step.title : '';
+                switch (cmd.name) {
+                    case "SetValue":
+                        return questionName + ' = ' + cmd.value;
+                    case "GotoStep":
+                        return commandName + ' ' + stepName;
+                    case "Clear":
+                        return commandName + ' ' + questionName;
+                    case "Finish":
+                        return commandName;
+                    case "Message":
+                        return commandName + ' ' + cmd.value;
                     default:
                         return '';
                 }

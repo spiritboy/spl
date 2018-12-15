@@ -1,5 +1,8 @@
 <template>
     <div id="app">
+        <div style="text-align: center">
+            <h1>فرایند تریاژ</h1>
+        </div>
         <FlowEditor v-if="category != null" v-bind:group="category.groups[0]" :category="category"/>
     </div>
 </template>

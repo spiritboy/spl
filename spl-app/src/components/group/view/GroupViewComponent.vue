@@ -4,17 +4,17 @@
             {{groupValue.groupModel.title}}
         </div>
         <div class="details">
-            <div class="qustion" v-for="qValue in groupValue.questionValues">
-                <span class="question-title">
+            <div class="qustion row" v-for="qValue in groupValue.questionValues.filter(q=>!hideEmptyQuestions || !q.isEmpty())">
+                <span class="question-title col-md-3">
                     {{qValue.questionModel.title}}:
                 </span>
-                <span class="question-value">
-                    {{qValue.value}}
+                <span class="question-value col-md-9">
+                    {{qValue.viewValue}}
                 </span>
             </div>
         </div>
         <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" ref="modal">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-body">
                         <GroupComponent v-if="groupValue!=null" v-bind:group-value="groupValue"/>
@@ -33,12 +33,12 @@
 </template>
 
 <script>
-    import GroupComponent from "@/components/group/GroupComponent";
+    import GroupComponent from "../GroupComponent";
 
     export default {
-        name: "GroupDetailsComponent",
+        name: "GroupViewComponent",
         components: {GroupComponent},
-        props: ['groupValue'],
+        props: ['groupValue','hideEmptyQuestions'],
         methods: {
             edit() {
                 $(this.$refs.modal).modal('show');

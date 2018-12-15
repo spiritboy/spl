@@ -5,7 +5,7 @@ import {MenuModel} from "@/models/MenuModel";
 
 export class spl {
     static menu(menuId) {
-        return axios.get('http://localhost:3000/api/v1/spl/menu/123');
+        return axios.get('http://localhost:3000/api/v1/spl/menu/854');
     }
 
     static getUrl(url) {
@@ -27,5 +27,8 @@ export class spl {
 
     static exec(tsql) {
         return axios.post('http://localhost:3000/api/v1/spl/exec', {source: tsql});
+    }
+    static report(reportId,fkId){
+        return axios.post('http://localhost:3000/api/v1/spl/report', {reportId,fkId});
     }
 }

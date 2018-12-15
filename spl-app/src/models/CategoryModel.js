@@ -13,6 +13,18 @@ export class CategoryModel {
             g.init();
     }
 
+    findQuestionValue(gid, qid, rowid) {
+        if (rowid == null) rowid = 0;
+        for (let g of this.groups) {
+            if (g.id.toString() === gid.toString()) {
+                for (let qv of g.groupValues[rowid].questionValues) {
+                    if (qv.questionModel.id.toString() === qid.toString())
+                        return qv;
+                }
+            }
+        }
+    }
+
     deserialize(input) {
         if (input == null)
             return null;

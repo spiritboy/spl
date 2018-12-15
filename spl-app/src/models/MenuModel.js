@@ -1,4 +1,5 @@
 import {CategoryModel} from "@/models/CategoryModel";
+import {QuestionValidationModel} from "./QuestionValidationModel";
 
 export class MenuModel {
     constructor() {

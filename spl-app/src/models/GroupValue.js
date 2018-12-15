@@ -8,5 +8,6 @@ export class GroupValue{
             let questionValue = new QuestionValue(q);
             this.questionValues.push(questionValue);
         }
+
     }
 }

@@ -6,16 +6,39 @@ export class SourceModel {
         this.url = '';
         this.script = '';
         this.refreshTime = -1;
+        this.preLoad = true;
+        this.sourceCache = null;
+    }
+
+    getById(id, callback) {
+        this.getSources((sources) => {
+            let _filter = sources.filter(item => item.id.toString() === id.toString());
+            callback(_filter.length >= 0 ? _filter[0] : null);
+        })
     }
 
     getSources(callback) {
+        if (this.sourceCache != null) {
+            if (callback != null)
+                callback(this.sourceCache);
+            return;
+        }
         if (this.script) {
-            console.log(this.parentQuestion)
             if (this.script != null && this.script.startsWith('js:')) {
                 //js
                 let script = "(function(){" + this.script.replace('js:', '') + "})()";
-                let array = eval(script);
-                callback(array.map((item)=>{return {id:item.ID,name:item.Name}}));
+                let array = [];
+                try {
+                    array = eval(script);
+                    this.sourceCache = array.map((item) => {
+                        return {id: item.ID, name: item.Name}
+                    });
+                }
+                catch {
+                }
+
+                if (callback != null)
+                    callback(this.sourceCache);
             }
             else if (this.script != null) {
                 //sp
@@ -26,13 +49,24 @@ export class SourceModel {
                     this.parentQuestion.parentGroup.id,
                     this.parentQuestion.id,
                     6462, 'fa');
-                let array = spl.exec(script).then((d) => {
-                    callback(d.data.map((item)=>{return {id:item.ID,name:item.Name}}));
+                spl.exec(script).then((d) => {
+                    try {
+                        this.sourceCache = d.data[0].map((item) => {
+                            return {id: item.ID, name: item.Name}
+                        });
+                        if (callback != null)
+                            callback(this.sourceCache);
+                    }
+                    catch {
+
+                    }
                 });
             }
         }
-        else if (this.url)
-            return spl.getUrl(this.url);
+        else if (this.url) {
+            this.sourceCache = spl.getUrl(this.url);
+            callback(this.sourceCache);
+        }
     }
 
     deserialize(input) {
@@ -41,6 +75,8 @@ export class SourceModel {
         this.refreshTime = input.refreshTime;
         this.script = input.script;
         this.url = input.url;
+        if (this.preLoad)
+            this.getSources(null);
         return this;
     }
 }

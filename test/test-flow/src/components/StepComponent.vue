@@ -121,7 +121,7 @@
                 return enterPaths;
             },
             isFinish() {
-                var finish = false;
+                let finish = false;
                 this.step.conditionGroups.forEach((cg) => cg.commands.forEach((c) => {
                     if (c.name === 'Finish') {
                         finish = true;

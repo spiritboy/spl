@@ -7,10 +7,11 @@
                     <option value="GotoStep">برو به</option>
                     <option value="SetValue">مقدار</option>
                     <option value="Finish">پایان</option>
+                    <option value="Message">پیام</option>
                     <option value="Clear">حذف کن</option>
                 </select>
             </div>
-            <div v-if="['GotoStep','Finish'].indexOf(this.command.name)===-1" class="form-group col-md-4">
+            <div v-if="['GotoStep','Finish','Message'].indexOf(this.command.name)===-1" class="form-group col-md-4">
                 <input readonly class="form-control" :value="command.question!=null?command.question.title:''"
                        @click="openQuestionSelector">
             </div>

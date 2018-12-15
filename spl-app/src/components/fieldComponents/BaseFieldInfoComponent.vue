@@ -1,14 +1,16 @@
 <template>
-
 </template>
 
 <script>
     export default {
-        name: "_BaseComponent",
+        name: "BaseFieldInfoComponent",
         props: ["questionValue"],
         methods: {
             doFocus() {
                 this.$refs.el.focus();
+            },
+            doValueChange() {
+                this.$emit('valueChange',this.questionValue)
             }
         },
         watch: {
@@ -16,11 +18,20 @@
             questionValue: {
                 immediate: true,
                 handler: function (newQuestionValue, oldQuestionValue) {
-                    if (newQuestionValue)
+                    if (newQuestionValue) {
                         newQuestionValue.events.addListener('focus', this.doFocus);
-                    if (oldQuestionValue)
+                        newQuestionValue.events.addListener('valueChange', this.doValueChange);
+                    }
+                    if (oldQuestionValue) {
                         oldQuestionValue.events.removeListener('focus', this.doFocus)
+                        oldQuestionValue.events.removeListener('valueChange', this.valueChange)
+                    }
                 }
+            }
+        },
+        computed:{
+            validationResults(){
+                return this.questionValue.validationResults;
             }
         }
     }

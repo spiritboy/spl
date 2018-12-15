@@ -1,22 +1,38 @@
 <template>
     <div>
         <label class="control-label" :title="this.questionValue.questionModel.fieldInfo.source.script">{{questionValue.questionModel.title}}</label>
-        <select class="form-control" v-model="questionValue.value" ref="el" v-selecttwo>
+        <sup v-if="validationResults.length > 0"
+             :title="validationResults.map(v=>v.message).join(' - ')"
+             class="fa fa-star validation-error"></sup>
+        <select v-if="!isRadio" v-show="options!=null && options.length > 0" class="form-control"
+                v-model="questionValue.value" ref="el"
+                v-selecttwo>
             <option v-for="option in options"
                     :value="option.id">{{option.name}}
             </option>
         </select>
+        <div v-else class="custom-control custom-radio" v-for="option in options">
+            <input class="custom-control-input" type="radio" v-model="questionValue.value"
+                   :name="questionValue.questionModel.id"
+                   :id="option.id"
+                   :value="option.id">
+            <label class="custom-control-label" :for="option.id">
+                {{option.name}}
+            </label>
+        </div>
     </div>
-</template>
+</template>Z
 
 <script>
-    import _BaseComponent from "@/components/fieldComponents/_BaseComponent"
+    import BaseFieldInfoComponent from "@/components/fieldComponents/BaseFieldInfoComponent"
+
     export default {
         name: "SelectComponent",
-        extends:_BaseComponent,
-        data(){
-            return{
-                options:[]
+        extends: BaseFieldInfoComponent,
+        props: ["isRadio"],
+        data() {
+            return {
+                options: []
             }
         },
         mounted: function () {
@@ -28,8 +44,9 @@
             //set the initial value
             $(this.$refs.el).val(this.questionValue.value).trigger("change");
 
-            this.questionValue.questionModel.fieldInfo.source.getSources((function(d){
+            this.questionValue.questionModel.fieldInfo.source.getSources((function (d) {
                 this.options = d;
+                //this.isRadio = d && d.length <= 3;
             }).bind(this))
         },
         directives: {
@@ -61,5 +78,8 @@
 </script>
 
 <style scoped>
-
+.custom-control.custom-radio{
+    margin: 5px;
+    font-size:larger;
+}
 </style>

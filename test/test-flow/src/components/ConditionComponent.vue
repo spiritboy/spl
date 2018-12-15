@@ -22,6 +22,7 @@
                     </select>
                 </div>
                 <a @click="removeCondition" class="btn-remove"><i class="fa fa-times"></i></a>
+                <a @click="expressionBuildClick" class="btn-edit"><i class="fa fa-edit"></i></a>
             </div>
         </form>
 
@@ -32,6 +33,7 @@
                                    :is-multiple="false"
                                    :id-prefix="index"
         ></QuestionSelectorComponent>
+
     </div>
 
 
@@ -40,10 +42,11 @@
 <script>
     import QuestionSelectorComponent from "./QuestionSelectorComponent";
     import {spl} from "../api/spl";
+    import ExpressionBuilderComponent from "./ExpressionBuilderComponent";
 
     export default {
         name: "ConditionComponent",
-        components: {QuestionSelectorComponent},
+        components: {ExpressionBuilderComponent, QuestionSelectorComponent},
         props: ["condition", "index", "category"],
         data() {
             return {
@@ -61,6 +64,9 @@
             },
             removeCondition() {
                 this.$emit('remove-condition', this.condition)
+            },
+            expressionBuildClick(){
+                this.$refs.exporessionBuilder.show();
             }
         },
         watch: {

@@ -1,16 +1,17 @@
 <template>
     <div>
         <label class="control-label">{{questionValue.questionModel.title}}</label>
+        <span v-if="questionValue.questionModel.validation.isRequired()" class="fa fa-star validation-error"></span>
         <input style="direction: ltr" class="form-control datepicker" ref="el" type="text" />
     </div>
 </template>
 
 <script>
-    import _BaseComponent from "@/components/fieldComponents/_BaseComponent"
+    import BaseFieldInfoComponent from "@/components/fieldComponents/BaseFieldInfoComponent"
     let dPicker = null;
     export default {
         name: "DateComponent",
-        extends:_BaseComponent,
+        extends:BaseFieldInfoComponent,
         mounted: function () {
             $(this.$refs.el).on('keypress', (function (event) {
                 //## we will add '/' character on user keypress, ex: user type: 1397 =>changes to=> 1397/

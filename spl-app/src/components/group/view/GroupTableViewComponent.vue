@@ -62,7 +62,7 @@
     export default {
         components: {GroupComponent},
         props: ["groupModel"],
-        name: "GroupTableDetailsComponent",
+        name: "GroupTableViewComponent",
         data: function () {
             return {
                 editingGroupValue: null
