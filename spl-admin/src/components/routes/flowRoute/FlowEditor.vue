@@ -21,7 +21,7 @@
     import draggable from 'vuedraggable'
 
     import StepComponent from "./StepComponent";
-    import {spl} from "../api/spl";
+    import {spl} from "../../../api/spl";
 
     global.data = {
         steps: [],

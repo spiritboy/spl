@@ -41,7 +41,7 @@
 
 <script>
     import QuestionSelectorComponent from "./QuestionSelectorComponent";
-    import {spl} from "../api/spl";
+    import {spl} from "../../../api/spl";
     import ExpressionBuilderComponent from "./ExpressionBuilderComponent";
 
     export default {
