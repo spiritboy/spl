@@ -1,0 +1,44 @@
+.select2-container--bootstrap{
+    width: initial!important;
+}
+.select2-container--bootstrap .select2-selection--single {
+    height: 38px;
+    line-height: 1.42857143;
+    padding: 6px 24px 6px 12px;
+}
+
+.select2-container--bootstrap .select2-selection--multiple {
+    min-height: 38px;
+    padding: 0;
+    height: auto;
+}
+
+.select2-results__option[aria-selected=true] {
+    display: none;
+}
+
+.search-list {
+    padding: 2px;
+}
+
+.search-list li:hover {
+    background-color: #eeeeee;
+}
+
+.search-list li {
+    list-style: none;
+    cursor: pointer;
+    margin: 2px;
+}
+
+.search-list li.active {
+    background-color: #6066cc;
+    color: white;
+}
+
+.class-ext {
+    height: 100% !important;
+    padding: 10px;
+    border: 1px solid #e2e2e2;
+    border-radius: 5px;
+}

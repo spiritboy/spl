@@ -52,7 +52,6 @@
         directives: {
             selecttwo: {
                 twoWay: true,
-
                 bind: function (el, binding, vnode) {
                     $(el).on('select2:select', function (evt) {
                         // if select2 changes, notify model

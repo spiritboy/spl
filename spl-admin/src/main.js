@@ -3,15 +3,17 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 import flowRoute from './components/routes/flowRoute/flowRoute'
 import entityRoute from './components/routes/entityRoute/entityRoute'
-import termRoute from './components/routes/termRoute/oldTermRoute'
+import classRoute from './components/routes/termRoute/classRoute'
+import termRoute from './components/routes/termRoute/termRoute'
 import Popover  from 'vue-js-popover'
-
+import './directives/directives'
 Vue.config.productionTip = false;
 
 const routes = [
     { path: '/flow', component: flowRoute },
     { path: '/entity', component: entityRoute },
     { path: '/term', component: termRoute },
+    { path: '/class', component: classRoute },
 ];
 const router = new VueRouter({
     routes // short for `routes: routes`
