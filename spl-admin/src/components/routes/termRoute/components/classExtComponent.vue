@@ -15,14 +15,14 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label">نوع داده</label>
-                            <select v-model="ext.dataType" class="form-control" :key="1">
+                            <select v-model="ext.dataType" class="form-control" :key="1" @input="onChangeDataType">
                                 <option value="string">رشته</option>
                                 <option value="number">عدد</option>
                                 <option value="date">تاریخ</option>
-                                <option value="class">شیئ</option>
+                                <option value="lookup">look up</option>
                             </select>
                         </div>
-                        <div v-if="ext.dataType === 'class'" class="form-group">
+                        <div v-if="ext.dataType === 'lookup'" class="form-group">
                             <label class="control-label">کلاس</label>
                             <Select2 :key="2"
                                      :text="ext.classRefName"
@@ -32,9 +32,15 @@
                                      :api="apiCall">
                             </Select2>
                         </div>
+                        <div class="form-check">
+                            <input v-model="ext.isRequired" type="checkbox" class="form-check-input" id="isReq">
+                            <label class="form-check-label" for="isReq">اجباری</label>
+                        </div>
+                        <div class="form-check">
+                            <input v-model="ext.isMultiSelect" type="checkbox" class="form-check-input" id="isMultiSelect">
+                            <label class="form-check-label" for="isMultiSelect">چند انتخابی</label>
+                        </div>
                         <div class="form-group">
-                            {{ext.dataType}}
-                            {{ext.clsId}}
                         </div>
                     </form>
                 </div>
@@ -57,7 +63,7 @@
     import {term} from "../../../../api/term";
 
     export default {
-        name: "extComponent",
+        name: "classExtComponent",
         components: {Select2},
         props: ["ext","parentClass"],
         methods: {
@@ -66,6 +72,9 @@
             },
             onChange(id,text){
                 this.ext.classRefName = text;
+            },
+            onChangeDataType(){
+                this.ext.classRefName = null;
             },
             show(){
                 $(this.$refs.modal).modal('show');

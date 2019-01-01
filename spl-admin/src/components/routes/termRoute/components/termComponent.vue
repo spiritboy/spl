@@ -23,7 +23,7 @@
         <div class="col-md-9" v-if="selectedClass!=null">
             <div class="class-ext">
                 <h3>
-                    <small>تعریف شیء برای</small>
+                    <small>تعریف ترم برای</small>
                     {{selectedClass.name}}
                 </h3>
                 <div class="input-group mb-3" style="max-width: 250px">
@@ -39,7 +39,7 @@
                             <i class="fa fa-plus"></i>
                         </button>
                     </div>
-                    <term-edit-component ref="termModal"></term-edit-component>
+                    <term-edit-component ref="termModal" :term="newTerm" @termSaved="termSaved"></term-edit-component>
                 </div>
                 <hr/>
                 <table class="table table-striped">
@@ -72,13 +72,15 @@
 <script>
     import {classModel} from "../model/classModel";
     import TermEditComponent from "./termEditComponent";
+    import {termModel} from "../model/termModel";
 
     let context = {
         searchedClasses: [],
         selectedClass: null,
         searchedTerms: [],
-        searchTermText:'',
+        searchTermText: '',
         searchText: '',
+        newTerm: null
     }
     export default {
         name: "termComponent",
@@ -90,15 +92,30 @@
             doSearch() {
                 classModel.Select(this.searchText, 1, 100).then(d => this.searchedClasses = d);
             },
-            doSearchTerms() {
-                this.selectedClass.SelectTerms(this.searchTermText,1, 100).then(d => this.searchedTerms = d);
+            async doSearchTerms() {
+                this.searchedTerms = await this.selectedClass.SelectTerms(this.searchTermText, 1, 100);
             },
             selectClass(cls) {
                 this.selectedClass = cls;
                 this.doSearchTerms();
             },
-            addNewTermClicked(){
+            async addNewTermClicked() {
+                this.newTerm = new termModel(this.selectedClass.id);
+                await this.newTerm.initFull();
+                //this.$refs.termModal.term = newTerm;
                 this.$refs.termModal.show();
+            },
+            editPropertyClicked() {
+
+            },
+            async removePropertyClicked(p) {
+                if((await p.delete()).process())
+                    this.searchedTerms.splice(this.searchedTerms.indexOf(p),1);
+            },
+            termSaved(term, isInsert) {
+                if (isInsert) {
+                    this.searchedTerms.push(term);
+                }
             }
         }
     }

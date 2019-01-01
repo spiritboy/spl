@@ -8,14 +8,21 @@
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
                     <a class="navbar-brand" href="#">تعاریف پایه</a>
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                        <li class="nav-item active">
+                        <li class="nav-item">
                             <router-link to="/flow" class="nav-link">تولید فرایند</router-link>
                         </li>
                         <li class="nav-item">
                             <router-link to="/entity" class="nav-link">ساختار منوها</router-link>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">ترمینولوژی</a>
+                            <div class="dropdown-menu">
+                                <router-link to="/term/term" class="dropdown-item">ترم ها</router-link>
+                                <router-link to="/term/class" class="dropdown-item">تعاریف کلاس</router-link>
+                            </div>
+                        </li>
                         <li class="nav-item">
-                            <router-link to="/term" class="nav-link">ترمینولوژی</router-link>
+
                         </li>
                     </ul>
                     <form class="form-inline my-2 my-lg-0">
@@ -44,7 +51,7 @@
     }
 
     * {
-        font-family: "B Koodak";
+        font-family: "B Koodak",serif;
     }
 
     .btn-add {
@@ -52,7 +59,6 @@
         display: block;
         border: 1px solid #8691ff;
         text-align: center;
-        background-color: transparent;
         color: #8691ff;
         opacity: .5;
         cursor: pointer;

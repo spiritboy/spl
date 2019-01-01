@@ -42,3 +42,10 @@
     border: 1px solid #e2e2e2;
     border-radius: 5px;
 }
+sup.fa-asterisk {
+    font-size: 10px;
+    color: red;
+}
+.validation-error{
+    color:red;
+}

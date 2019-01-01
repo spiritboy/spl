@@ -67,4 +67,19 @@ export class term {
     static TermSelect(id,name,perpage,pageno) {
         return axios.post(config.webApi + '/api/v1/term/Term/Select',{ClassID:id,Name:name,RowCountPerPage:perpage,PageNo:pageno});
     }
+
+    //////////////////
+    //////ClassSelect///////
+    //Expecting ClassID,Name,Value,ID
+    static async  TermInsertUpdate(clsId,Name,Value,ID) {
+        let d = await axios.post(config.webApi + '/api/v1/term/Term/InsertUpdate',{ClassID:clsId,Name:Name,Value:Value,ID:ID});
+        return new dbMessage().deserialize(d.data[0]);
+    }
+    //////////////////
+    //////ClassDeleteExt///////
+    //Expecting Property,DataType,ID
+    static async TermDelete(id) {
+        let d = await axios.delete(config.webApi + '/api/v1/term/Term/Delete/'+id);
+        return new dbMessage().deserialize(d.data[0]);
+    }
 }

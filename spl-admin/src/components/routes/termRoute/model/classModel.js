@@ -1,6 +1,7 @@
 import {term} from "../../../../api/term";
 import {classExtModel} from "./classExtModel";
 import config from "../../../../api/config";
+import {termModel} from "./termModel";
 
 export class classModel {
     constructor() {
@@ -10,11 +11,10 @@ export class classModel {
         this.properties = [];
     }
 
-    loadProperties() {
+    async loadProperties() {
         this.busy = true;
-        term.ClassSelectExt(this.id).then(d => {
-            this.properties = d.data.map(v => new classExtModel().deserialize(v));
-        }).finally(() => this.busy = false);
+        this.properties = (await term.ClassSelectExt(this.id)).data.map(v => new classExtModel().deserialize(v));
+        this.busy = false;
     }
 
     deserialize(inp) {
@@ -36,7 +36,12 @@ export class classModel {
         return dbMsg;
     }
     async insertExt(newProp) {
-        let dbMsg = await term.ClassInsertExt({ClassID: this.id, Property: newProp.name, DataType: newProp.dataType});
+        let dbMsg = await term.ClassInsertExt({
+            ClassID: this.id,
+            Property: newProp.name,
+            IsMultiSelect: newProp.isMultiSelect,
+            IsRequired: newProp.isRequired,
+            DataType: newProp.dataType});
         newProp.id = dbMsg.id;
         return dbMsg;
     }
@@ -46,7 +51,12 @@ export class classModel {
     }
     async SelectTerms(name,page,perpage){
         let db_classes = await term.TermSelect(this.id,name, perpage, page);
-        let classes = db_classes.data.map(v => {return {id:v.ID,name:v.Name};});
+        let classes = db_classes.data.map(v => {
+            let tmodel = new termModel(this.id);
+            tmodel.name = v.Name;
+            tmodel.id = v.ID;
+            return tmodel;
+        });
         return classes;
     }
     static async Select(name, page, perpage) {

@@ -44,13 +44,16 @@
                 <div v-if="selectedClass.id>0">
                     <button @click.prevent="addPropertyClicked" class="btn btn-light"><i class="fa fa-plus"></i>
                     </button>
-                    <ext-component :ext="newProperty" ref="el0" :parent-class="selectedClass"></ext-component>
+                    <class-ext-component :ext="newProperty" ref="el0"
+                                         :parent-class="selectedClass"></class-ext-component>
                     <table class="table table-striped">
                         <thead>
                         <tr>
                             <th>ردیف</th>
                             <th>نام</th>
                             <th>نوع داده</th>
+                            <th>اجباری</th>
+                            <th>چند مقدرای</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -60,13 +63,22 @@
                             <td>{{p.name}}</td>
                             <td>{{p.classRefName? p.classRefName:p.dataType}}</td>
                             <td>
+                                <i v-if="p.isRequired" class="fa fa-check"></i>
+                                <i v-else ></i>
+                            </td>
+                            <td>
+                                <i v-if="p.isMultiSelect" class="fa fa-check"></i>
+                                <i v-else ></i>
+                            </td>
+                            <td>
                                 <button @click.prevent class="btn btn-light" @click.prevent="editPropertyClicked(p)"><i
                                         class="fa fa-edit"></i></button>
                                 <button @click.prevent class="btn btn-light" @click.prevent="removePropertyClicked(p)">
-                                    <i
-                                            class="fa fa-times"></i></button>
+                                    <i class="fa fa-times"></i>
+                                </button>
                             </td>
-                            <ext-component :key="p.id" :ext="p" :ref="'el' + p.id.toString()" :parent-class="selectedClass"></ext-component>
+                            <class-ext-component :key="p.id" :ext="p" :ref="'el' + p.id.toString()"
+                                                 :parent-class="selectedClass"></class-ext-component>
                         </tr>
                         </tbody>
                     </table>
@@ -81,7 +93,7 @@
 <script>
     import {classModel} from "../model/classModel";
     import {classExtModel} from "../model/classExtModel";
-    import ExtComponent from "./extComponent";
+    import ClassExtComponent from "./classExtComponent";
 
     let context = {
         searchedClasses: [],
@@ -92,7 +104,7 @@
     }
     export default {
         name: "classComponent",
-        components: {ExtComponent},
+        components: {ClassExtComponent},
         data() {
             return context;
         },
@@ -100,10 +112,10 @@
             doSearch() {
                 classModel.Select(this.searchText, 1, 100).then(d => this.searchedClasses = d);
             },
-            selectClass(cls) {
+            async selectClass(cls) {
                 this.selectedClass = cls;
                 this.selectedProperty = null;
-                this.selectedClass.loadProperties();
+                await this.selectedClass.loadProperties();
             },
             addPropertyClicked() {
                 this.newProperty = new classExtModel();
@@ -111,7 +123,7 @@
             },
             editPropertyClicked(p) {
                 this.selectedProperty = p;
-                (this.$refs['el'+p.id.toString()][0]).show();
+                (this.$refs['el' + p.id.toString()][0]).show();
             },
             async addClassClicked() {
                 this.selectedClass = new classModel();
@@ -142,9 +154,9 @@
                 }
             }
         },
-        computed:{
-            canAddClass(){
-                return this.searchText && this.searchedClasses.filter(v=>v.name === this.searchText).length === 0;
+        computed: {
+            canAddClass() {
+                return this.searchText && this.searchedClasses.filter(v => v.name === this.searchText).length === 0;
             }
         }
     }

@@ -12,8 +12,8 @@ Vue.config.productionTip = false;
 const routes = [
     { path: '/flow', component: flowRoute },
     { path: '/entity', component: entityRoute },
-    { path: '/term', component: termRoute },
-    { path: '/class', component: classRoute },
+    { path: '/term/term', component: termRoute },
+    { path: '/term/class', component: classRoute },
 ];
 const router = new VueRouter({
     routes // short for `routes: routes`
