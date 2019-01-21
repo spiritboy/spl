@@ -9,6 +9,8 @@ export class classExtModel {
         this._dataType = '';
         this.isRequired = true;
         this.isMultiSelect = false;
+        this.isId = false;
+        this.isSearchable = 0.0;
     }
 
     get dataType() {
@@ -23,6 +25,8 @@ export class classExtModel {
         this.name = inp.Property;
         this.isRequired = inp.IsRequired;
         this.isMultiSelect = inp.IsMultiSelect;
+        this.isId = inp.IsID;
+        this.isSearchable = inp.IsSearchable;
         this.dataType = inp.DataType;
         this.classRefName = inp.ClassRefName;
         if (inp.DataType.indexOf('lookup') === 0) {
@@ -38,10 +42,12 @@ export class classExtModel {
     }
 
     async update() {
-        let dbMsg = await term.ClassUpdateExt({
+        let dbMsg = await term.ClassUpdateEx({
             ID: this.id,
             Property: this.name,
             IsMultiSelect: this.isMultiSelect,
+            IsID: this.isId,
+            IsSearchable: this.isSearchable,
             IsRequired: this.isRequired,
             DataType: this.getDataType()
         });

@@ -10,18 +10,18 @@
     };
     export default {
         name: "Select2",
-        props: ['options', 'value', 'api'],
+        props: ['options', 'value', 'api','apiState','multiple'],
         mounted() {
             var vm = this;
             selec2Conf.data=this.options;
             if (this.api != null) {
+                //selec2Conf.multiple = this.multiple === true;
                 selec2Conf.ajax = {
                     transport: function (params, success, failure) {
-                        console.log(params)
                         let p = 1, pp = 100, q = '';
                         if (params.data.page != null) p = params.data.page;
                         if (params.data.q != null) q = params.data.q;
-                        vm.api(params.data.q, pp, p).then(d => {
+                        vm.api(params.data.q, pp, p,vm.apiState).then(d => {
                             success(d.data);
                         }).catch(() => failure());
                     },
@@ -41,7 +41,7 @@
                 }
             }
             $(this.$el)
-            // init select2
+                // init select2
                 .select2(selec2Conf)
                 .val(this.value)
                 .trigger('change')
@@ -63,8 +63,6 @@
             options: function (options) {
                 // update options
                 selec2Conf.data=options;
-                //$(this.$el).empty().select2(selec2Conf)
-                console.log(this.value)
             }
         },
         destroyed: function () {

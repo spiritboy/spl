@@ -1,7 +1,6 @@
 <template>
     <div class="row">
-
-        <div class="col-md-3">
+        <div class="col-md-4">
 
             <div class="class-ext">
                 <div class="input-group mb-3">
@@ -26,12 +25,12 @@
                 </ul>
             </div>
         </div>
-        <div class="col-md-9" v-if="selectedClass!=null">
+        <div class="col-md-8" v-if="selectedClass!=null">
             <div class="class-ext">
                 <form class="form-inline" style="position: relative;">
                     <div class="form-group">
                         <label class="control-label"> نام کلاس:</label>
-                        <input v-model="selectedClass.name" class="form-control"/>
+                        <input v-model="selectedClass.name" class="form-control" style="width: 250px;"/>
                     </div>
                     <div class="form-group">
                         <button @click.prevent="saveClassClicked" class="btn btn-light"><i class="fa fa-save"></i>
@@ -41,10 +40,10 @@
                             style="position: absolute;left:0"> حذف کلاس <i class="fa fa-times"></i></button>
                 </form>
                 <hr/>
-                <div v-if="selectedClass.id>0">
+                <div v-if="selectedClass!=null && selectedClass.id>0">
                     <button @click.prevent="addPropertyClicked" class="btn btn-light"><i class="fa fa-plus"></i>
                     </button>
-                    <class-ext-component :ext="newProperty" ref="el0"
+                    <class-ext-component :ext="newProperty" ref="el0" @popupClosed="popupClosed"
                                          :parent-class="selectedClass"></class-ext-component>
                     <table class="table table-striped">
                         <thead>
@@ -54,21 +53,26 @@
                             <th>نوع داده</th>
                             <th>اجباری</th>
                             <th>چند مقدرای</th>
+                            <th>قابل جستجو</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="(p,i) in selectedClass.properties">
                             <td>{{i+1}}</td>
-                            <td>{{p.name}}</td>
+                            <td>{{p.name}} <sup v-if="p.isId"><span class="badge badge-info">ID</span></sup></td>
                             <td>{{p.classRefName? p.classRefName:p.dataType}}</td>
                             <td>
                                 <i v-if="p.isRequired" class="fa fa-check"></i>
-                                <i v-else ></i>
+                                <i v-else></i>
                             </td>
                             <td>
                                 <i v-if="p.isMultiSelect" class="fa fa-check"></i>
-                                <i v-else ></i>
+                                <i v-else></i>
+                            </td>
+                            <td>
+                                <i v-if="p.isSearchable > 0" class="fa fa-check"></i>
+                                <i v-else></i>
                             </td>
                             <td>
                                 <button @click.prevent class="btn btn-light" @click.prevent="editPropertyClicked(p)"><i
@@ -78,6 +82,7 @@
                                 </button>
                             </td>
                             <class-ext-component :key="p.id" :ext="p" :ref="'el' + p.id.toString()"
+                                                 @popupClosed="popupClosed"
                                                  :parent-class="selectedClass"></class-ext-component>
                         </tr>
                         </tbody>
@@ -86,7 +91,6 @@
             </div>
 
         </div>
-
     </div>
 </template>
 
@@ -108,14 +112,19 @@
         data() {
             return context;
         },
+        mounted() {
+            this.doSearch();
+        },
         methods: {
             doSearch() {
+                this.selectedClass = null;
                 classModel.Select(this.searchText, 1, 100).then(d => this.searchedClasses = d);
             },
             async selectClass(cls) {
-                this.selectedClass = cls;
+                this.selectedClass = null;
                 this.selectedProperty = null;
-                await this.selectedClass.loadProperties();
+                await cls.loadProperties();
+                this.selectedClass = cls;
             },
             addPropertyClicked() {
                 this.newProperty = new classExtModel();
@@ -151,6 +160,17 @@
                     if ((await this.selectedClass.update()).process()) {
 
                     }
+                }
+            },
+            popupClosed(mode) {
+                if (mode === 'update') {
+
+                }
+                else if (mode === 'insert') {
+
+                }
+                else if (mode === 'failed') {
+                    this.selectClass(this.selectedClass);
                 }
             }
         },

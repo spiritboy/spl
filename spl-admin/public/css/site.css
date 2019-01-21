@@ -49,3 +49,11 @@ sup.fa-asterisk {
 .validation-error{
     color:red;
 }
+@media (min-width: 700px) {
+    .full-width-container {
+        max-width: initial!important;
+    }
+}
+i{
+    font-size: smaller;
+}

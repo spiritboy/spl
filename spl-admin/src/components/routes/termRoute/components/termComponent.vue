@@ -1,126 +1,188 @@
 <template>
-    <div class="row">
+    <div class="vdl-parent">
+        <div class="row">
 
-        <div class="col-md-3">
-            <div class="class-ext">
-                <div class="input-group mb-3">
-                    <input v-model="searchText" @input="doSearch()" type="text" class="form-control"
-                           placeholder="جستجو کنید ...">
-                    <div class="input-group-prepend">
-                        <button @click="doSearch()" class="btn input-group-text">
-                            <i class="fa fa-search"></i>
-                        </button>
+            <div class="col-md-3">
+                <div class="class-ext">
+                    <div class="input-group mb-3">
+                        <input v-model="searchText" @input="debounceDoSearch" type="text" class="form-control"
+                               placeholder="جستجو کنید ...">
+                        <div class="input-group-prepend">
+                            <button @click="doSearch()" class="btn input-group-text">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
                     </div>
+                    <ul class="search-list">
+                        <li v-for="search in searchedClasses" @click="selectSearch(search)"
+                            :class="{'active':search === selectedSearch}">
+                            <span :style="{opacity:(search.termId?.5:1)}">{{search.cls.name}}</span>
+                            <small v-if="search.termId" class="fa fa-chevron-left"
+                                   style="opacity: .5;margin: 3px"></small>
+                            <span v-if="search.termId"> {{search.termName}}</span>
+                            <sup v-if="search.oId == 2"><span class="badge badge-info">id</span> </sup>
+                        </li>
+                    </ul>
                 </div>
-                <ul class="search-list">
-                    <li v-for="cls in searchedClasses" @click="selectClass(cls)"
-                        :class="{'active':cls === selectedClass}">
-                        {{cls.name}}
-                    </li>
-                </ul>
+            </div>
+            <div class="col-md-9" v-if="selectedSearch!=null && selectedSearch.cls!=null">
+                <div class="class-ext">
+                    <h3>
+                        <small>تعریف ترم برای</small>
+                        {{selectedSearch.cls.name}}
+                    </h3>
+                    <div class="input-group mb-8" style="max-width: 350px">
+                        <input v-model="searchTermText" @input="debounceDoSearchTerms()" type="text" class="form-control"
+                               placeholder="جستجو کنید ...">
+                        <div class="input-group-prepend">
+                            <button @click="doSearchTerms()" class="btn input-group-text">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="input-group-prepend">
+                            <button @click="addNewTermClicked()" class="btn input-group-text">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <term-edit-component ref="termModal" :term="newTerm"
+                                             @termSaved="termSaved"></term-edit-component>
+                    </div>
+                    <table class="table table-sm table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>نام</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(p,i) in searchedTerms">
+                            <td>{{i+1}}</td>
+                            <td  @click="showInfo(p)"><i class="fa fa-info-circle"></i> <span>{{p.name}}</span></td>
+                            <td>
+                                <button @click.prevent class="btn btn-light" @click.prevent="editTermClicked(p)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button @click.prevent class="btn btn-light" @click.prevent="removeTermClicked(p)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
             </div>
         </div>
-        <div class="col-md-9" v-if="selectedClass!=null">
-            <div class="class-ext">
-                <h3>
-                    <small>تعریف ترم برای</small>
-                    {{selectedClass.name}}
-                </h3>
-                <div class="input-group mb-3" style="max-width: 250px">
-                    <input v-model="searchTermText" @input="doSearchTerms()" type="text" class="form-control"
-                           placeholder="جستجو کنید ...">
-                    <div class="input-group-prepend">
-                        <button @click="doSearchTerms()" class="btn input-group-text">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
-                    <div class="input-group-prepend">
-                        <button @click="addNewTermClicked()" class="btn input-group-text">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                    <term-edit-component ref="termModal" :term="newTerm" @termSaved="termSaved"></term-edit-component>
-                </div>
-                <hr/>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th width="80">ردیف</th>
-                        <th>نام</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(p,i) in searchedTerms">
-                        <td width="80">{{i+1}}</td>
-                        <td>{{p.name}}</td>
-                        <td>
-                            <button @click.prevent class="btn btn-light" @click.prevent="editPropertyClicked(p)"><i
-                                    class="fa fa-edit"></i></button>
-                            <button @click.prevent class="btn btn-light" @click.prevent="removePropertyClicked(p)">
-                                <i
-                                        class="fa fa-times"></i></button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <loading :active.sync="isLoading"
+                 :is-full-page="!isLoading"></loading>
     </div>
 </template>
 
 <script>
-    import {classModel} from "../model/classModel";
     import TermEditComponent from "./termEditComponent";
     import {termModel} from "../model/termModel";
+    import Loading from 'vue-loading-overlay';
+    import 'vue-loading-overlay/dist/vue-loading.css';
 
     let context = {
         searchedClasses: [],
-        selectedClass: null,
+        selectedSearch: null,
         searchedTerms: [],
         searchTermText: '',
         searchText: '',
-        newTerm: null
-    }
+        newTerm: null,
+        isLoading: false
+    };
+    let $vm = null;
     export default {
         name: "termComponent",
-        components: {TermEditComponent},
+        components: {TermEditComponent, Loading},
         data() {
             return context;
         },
+        mounted() {
+            $vm = this;
+            this.doSearch();
+        },
         methods: {
-            doSearch() {
-                classModel.Select(this.searchText, 1, 100).then(d => this.searchedClasses = d);
+            debounceDoSearch: _.debounce(()=>{
+                $vm.doSearch();
+            },500),
+            async doSearch() {
+                try {
+                    this.isLoading = true;
+                    this.searchedTerms = [];
+                    this.selectedSearch = null;
+                    this.searchedClasses = await termModel.SearchClassAndTerms(this.searchText, 1, 100);
+                } catch (e) {
+
+                }
+                this.isLoading = false;
             },
+            debounceDoSearchTerms: _.debounce(()=>{
+                $vm.doSearchTerms();
+            },500),
             async doSearchTerms() {
-                this.searchedTerms = await this.selectedClass.SelectTerms(this.searchTermText, 1, 100);
+                try {
+                    this.isLoading = true;
+                    this.searchedTerms = await this.selectedSearch.cls.SelectTerms(this.searchTermText, 1, 10);
+                } catch (e) {
+
+                }
+                this.isLoading = false;
             },
-            selectClass(cls) {
-                this.selectedClass = cls;
+            selectSearch(search) {
+                this.searchTermText = '';
+                this.selectedSearch = search;
+                if (this.selectedSearch.termId)
+                    this.searchTermText = this.selectedSearch.termName;
                 this.doSearchTerms();
             },
             async addNewTermClicked() {
-                this.newTerm = new termModel(this.selectedClass.id);
+                this.newTerm = new termModel(this.selectedSearch.cls.id);
+                this.newTerm.name = this.searchTermText;
                 await this.newTerm.initFull();
-                //this.$refs.termModal.term = newTerm;
                 this.$refs.termModal.show();
             },
-            editPropertyClicked() {
-
+            async editTermClicked(term) {
+                this.newTerm = term;
+                await this.newTerm.initFull();
+                this.$refs.termModal.show();
             },
-            async removePropertyClicked(p) {
-                if((await p.delete()).process())
-                    this.searchedTerms.splice(this.searchedTerms.indexOf(p),1);
+            async removeTermClicked(p) {
+                if ((await p.delete()).process())
+                    this.searchedTerms.splice(this.searchedTerms.indexOf(p), 1);
             },
             termSaved(term, isInsert) {
                 if (isInsert) {
                     this.searchedTerms.push(term);
                 }
+            },
+            showInfo(p){
+                alert(p.propertiesString)
             }
         }
     }
 </script>
 
 <style scoped>
+    table button {
+        padding: 0px 5px;
+    }
 
+    td.properties {
+        font-size: 12px
+    }
+
+    table th:first-child {
+        width: 0px;
+    }
+
+    table th:last-child {
+        width: 60px;
+    }
+    table td .fa-info-circle{
+        margin: 0 0 0 10px;
+    }
 </style>

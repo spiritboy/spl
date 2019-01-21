@@ -19,6 +19,7 @@
                             <div class="dropdown-menu">
                                 <router-link to="/term/term" class="dropdown-item">ترم ها</router-link>
                                 <router-link to="/term/class" class="dropdown-item">تعاریف کلاس</router-link>
+                                <router-link to="/entity" class="dropdown-item">تعاریف entity</router-link>
                             </div>
                         </li>
                         <li class="nav-item">

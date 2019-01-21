@@ -9,11 +9,12 @@ export class classModel {
         this.name = '';
         this.id = 0;
         this.properties = [];
+        this.propertiesString = '';
     }
 
     async loadProperties() {
         this.busy = true;
-        this.properties = (await term.ClassSelectExt(this.id)).data.map(v => new classExtModel().deserialize(v));
+        this.properties = (await term.ClassSelectEx(this.id)).data.map(v => new classExtModel().deserialize(v));
         this.busy = false;
     }
 
@@ -32,21 +33,26 @@ export class classModel {
         return dbMsg;
     }
     async update() {
-        let dbMsg = await term.ClassUpdate({ID:this.id,Name: this.name, UserID: config.userId});
+        let dbMsg = await term.ClassUpdate({
+            ID:this.id,
+            Name: this.name,
+            UserID: config.userId});
         return dbMsg;
     }
     async insertExt(newProp) {
-        let dbMsg = await term.ClassInsertExt({
+        let dbMsg = await term.ClassInsertEx({
             ClassID: this.id,
             Property: newProp.name,
             IsMultiSelect: newProp.isMultiSelect,
+            IsID: newProp.isId,
+            IsSearchable: newProp.isSearchable,
             IsRequired: newProp.isRequired,
-            DataType: newProp.dataType});
+            DataType: newProp.getDataType()});
         newProp.id = dbMsg.id;
         return dbMsg;
     }
     async deleteExt(id) {
-        let dbMsg = await term.ClassDeleteExt(id);
+        let dbMsg = await term.ClassDeleteEx(id);
         return dbMsg;
     }
     async SelectTerms(name,page,perpage){
@@ -55,8 +61,10 @@ export class classModel {
             let tmodel = new termModel(this.id);
             tmodel.name = v.Name;
             tmodel.id = v.ID;
+            tmodel.propertiesString = v.Properties;
             return tmodel;
         });
+        console.log(db_classes)
         return classes;
     }
     static async Select(name, page, perpage) {

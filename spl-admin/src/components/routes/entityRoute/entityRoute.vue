@@ -1,47 +1,235 @@
 <template>
-    <div class="container">
+    <div class="container full-width-container" style="margin-top: 10px;position: relative;min-height: 400px">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="position: relative;">
+                <a @click="closeBradCrumbClicked"
+                   style="color:#a90000;margin:0px 10px;position: absolute;top:0;right:-5px;cursor: pointer;">
+                    <i class="fa fa-times"></i>
+                </a>
+                <li class="breadcrumb-item" v-if="selectedSearchBarItem!=null && selectedSearchBarItem.MenuItem!=null">
+                    <a @click="breadCrumbSelect(selectedSearchBarItem.MenuItem)" href="#">{{selectedSearchBarItem.MenuItem.name}}</a>
+                </li>
+                <li class="breadcrumb-item"
+                    v-if="selectedSearchBarItem!=null && selectedSearchBarItem.CategoryItem!=null">
+                    <a @click="breadCrumbSelect(selectedSearchBarItem.CategoryItem)" href="#">{{selectedSearchBarItem.CategoryItem.name}}</a>
+                </li>
+                <li class="breadcrumb-item" v-if="selectedSearchBarItem!=null && selectedSearchBarItem.GroupItem!=null">
+                    <a @click="breadCrumbSelect(selectedSearchBarItem.GroupItem)" href="#">{{selectedSearchBarItem.GroupItem.name}}</a>
+                </li>
+                <li class="breadcrumb-item"
+                    v-if="selectedSearchBarItem!=null && selectedSearchBarItem.QuestionItem!=null">
+                    <a href="#">{{selectedSearchBarItem.QuestionItem.name}}</a>
+                </li>
+            </ol>
+        </nav>
         <div class="row">
             <div class="col-4">
-                <TreeView :tree-data="treeData" @onEdit="onEdit"/>
+                <div class="class-ext">
+                    <div class="input-group mb-6">
+                        <input v-model="searchText" @input="debounceDoSearch" type="text" class="form-control"
+                               placeholder="جستجو کنید ...">
+                        <div class="input-group-prepend">
+                            <button @click="doSearch()" class="btn input-group-text">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <ul class="search-list">
+                        <li v-for="searchBar in searchedArray" @click="selectSearch(searchBar)"
+                            :class="{'active':searchBar === selectedSearchBarItem}"
+                            style="direction: rtl;text-align: right">
+                           <span class="bar-item"
+                                 v-if="searchBar.MenuItem!=null"
+                                 :class="{'found':searchBar.MenuItem!=null && searchBar.id.toString() === searchBar.MenuItem.id.toString()}">
+                               {{searchBar.MenuItem.name}}
+                           </span>
+                            <i v-if="searchBar.CategoryItem!=null" class="fa fa-chevron-left"></i>
+                            <span class="bar-item" v-if="searchBar.CategoryItem!=null"
+                                  :class="{'found':searchBar.CategoryItem!=null && searchBar.id.toString() === searchBar.CategoryItem.id.toString()}">
+                                {{searchBar.CategoryItem.name}}
+                           </span>
+                            <i v-if="searchBar.GroupItem!=null" class="fa fa-chevron-left"></i>
+                            <span class="bar-item" v-if="searchBar.GroupItem!=null"
+                                  :class="{'found':searchBar.GroupItem!=null && searchBar.id.toString() === searchBar.GroupItem.id.toString()}">
+                                {{searchBar.GroupItem.name}}
+                           </span>
+                            <i v-if="searchBar.QuestionItem!=null" class="fa fa-chevron-left"></i>
+                            <span class="bar-item" v-if="searchBar.QuestionItem!=null"
+                                  :class="{'found':searchBar.QuestionItem!=null && searchBar.id.toString() === searchBar.QuestionItem.id.toString()}">
+                                {{searchBar.QuestionItem.name}}
+                           </span>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="col-8">
-                <editor-menu></editor-menu>
+                <div v-if="selectedSearchBarItem!=null && selectedSearchBarItem.LastItem.treeLevel!==4">
+                    <div>
+                        <i class="fa fa-sitemap" style="font-size: 13px"></i>
+                        <span class="font-weight-bold"> {{getTitle()}}</span>
+                    </div>
+                    <div class="input-group mb-8" style="max-width: 350px">
+                        <input v-model="searchChildText" @input="debounceDoSearchChildren()" type="text"
+                               class="form-control"
+                               placeholder="جستجو کنید ...">
+                        <div class="input-group-prepend">
+                            <button @click="doSearchChildren()" class="btn input-group-text">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="input-group-prepend">
+                            <button @click="addNewChildClicked()" class="btn input-group-text">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <table class="children table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ردیف</th>
+                            <th>نام</th>
+                            <th>عنوان</th>
+                            <th>عملیات</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="row,i in children">
+                            <td>{{i+1}}</td>
+                            <td>
+                                <a href="#" @click="selectAsParent(row)"><span>{{row.name}}</span></a>
+                            </td>
+                            <td>
+                                <a href="#" @click="selectAsParent(row)"><span>{{row.caption}}</span></a>
+                            </td>
+                            <td>
+                                <div>
+                                    <a @click="selectAsParent(row)"><i class="fa fa-sitemap fa-rotate-90"></i></a>
+                                    <a><i class="fa fa-times"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+        <loading :active.sync="isLoading"
+                 :is-full-page="!isLoading"></loading>
     </div>
 </template>
 
 <script>
-    import TreeView from "../../shared/TreeView/TreeView";
-    import {ItemModel} from "../../shared/TreeView/ItemModel";
-    import EditorMenu from "./editorMenu";
+    import Loading from 'vue-loading-overlay';
+    import {searchBarModel} from "./models/searchBarModel";
+    import {searchChildrenModel} from "./models/searchChildrenModel";
 
-    let d = new ItemModel(0, "منوها");
-    d.addItem(new ItemModel(0, "منوی پرسنلی"));
-    let sub2 = new ItemModel(0, "منوی انبار");
-    d.addItem(sub2);
-    sub2.addItem(new ItemModel(0, "اطلاعات کالا"));
-    sub2.addItem(new ItemModel(0, "اطلاعات برند"));
-    sub2.addItem(new ItemModel(0, "اطلاعات مدل"));
-    let sub3 = new ItemModel(0, "منوی شرح حال");
-    d.addItem(sub3);
-    sub3.addItem(new ItemModel(0, "شکایت اصلی"));
-    sub3.addItem(new ItemModel(0, "آلرژی"));
-    sub3.addItem(new ItemModel(0, "سوابق فامیلی"));
+    let context = {
+        searchText: '',
+        searchedArray: [],
+        selectedSearchBarItem: null,
+        children: [],
+        searchChildText: '',
+        isLoading: false,
+        searchResult: []
+    };
+    let $vm = null;
     export default {
         name: "entityRoute",
-        components: {EditorMenu, TreeView},
+        components: {Loading},
         data() {
-            return {treeData: d}
+            return context;
         },
-        methods:{
-            onEdit(item){
-                alert(item.name)
+        mounted() {
+            $vm = this;
+            this.doSearch();
+        },
+        methods: {
+            debounceDoSearch: _.debounce(() => {
+                $vm.doSearch();
+            }, 500),
+            debounceDoSearchChildren: _.debounce(() => {
+                $vm.doSearchChildren();
+            }, 500),
+            async doSearch() {
+                try {
+                    this.isLoading = true;
+                    this.searchedArray = [];
+                    this.selectedSearchBarItem = null;
+                    this.searchedArray = await searchBarModel.searchTree(this.searchText, 100, 1);
+                } catch (e) {
+
+                }
+                this.isLoading = false;
+            },
+            async doSearchChildren() {
+                try {
+                    this.isLoading = true;
+                    this.children = [];
+                    this.children = await searchChildrenModel.children(this.selectedSearchBarItem.LastItem.id, this.searchChildText, 100, 1);
+                } catch (e) {
+
+                }
+                this.isLoading = false;
+            },
+            async selectSearch(selectedSearchItem) {
+                this.selectedSearchBarItem = selectedSearchItem;
+                await this.doSearchChildren();
+            },
+            closeBradCrumbClicked() {
+                this.searchText = '';
+                this.selectedSearchBarItem = null;
+            },
+            addNewChildClicked() {
+
+            },
+            async selectAsParent(child) {
+                this.selectedSearchBarItem.addChild(child.id, child.name);
+                await this.doSearchChildren();
+            },
+            async breadCrumbSelect(item) {
+                while (this.selectedSearchBarItem.LastItem !== null && this.selectedSearchBarItem.LastItem.id !== item.id) {
+                    this.selectedSearchBarItem.popChild();
+                }
+                await this.doSearchChildren();
+            },
+            getTitle() {
+                switch (this.selectedSearchBarItem.LastItem.treeLevel) {
+                    case 1:
+                        return "کتگوری ها";
+                    case 2:
+                        return "گروه ها";
+                    case 3:
+                        return "سوال ها";
+                }
+                return this.selectedSearchBarItem.LastItem.treeLevel;
             }
         }
     }
 </script>
 
 <style scoped>
+    .breadcrumb-item {
+        cursor: pointer;
+    }
 
+    .breadcrumb {
+        min-height: 48px;
+    }
+
+    .breadcrumb-item:last-child a {
+        border: 1px solid lightgray;
+        padding: 2px;
+        border-radius: 5px;
+        background-color: rgba(199, 185, 255, 0.75);
+    }
+
+    ul.search-list li span.bar-item {
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    ul.search-list li span.found {
+        text-decoration: underline;
+        font-size: 17px;
+    }
 </style>

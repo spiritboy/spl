@@ -1,5 +1,5 @@
 <template>
-    <div class="container" style="margin-top: 10px">
+    <div class="container full-width-container" style="margin-top: 10px">
         <term-component></term-component>
     </div>
 </template>
