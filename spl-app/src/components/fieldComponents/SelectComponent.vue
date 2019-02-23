@@ -21,7 +21,7 @@
             </label>
         </div>
     </div>
-</template>Z
+</template>
 
 <script>
     import BaseFieldInfoComponent from "@/components/fieldComponents/BaseFieldInfoComponent"

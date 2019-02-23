@@ -57,3 +57,12 @@ sup.fa-asterisk {
 i{
     font-size: smaller;
 }
+a.btn-icon:hover {
+    color: blue!important;
+}
+a.btn-icon{
+    text-align: center;
+    padding: 5px;
+    margin: 3px;
+    cursor: pointer;
+}

@@ -32,6 +32,12 @@
                             <button @click="doSearch()" class="btn input-group-text">
                                 <i class="fa fa-search"></i>
                             </button>
+                            <div class="input-group-prepend">
+                                <button @click="addNewMenuClicked()" class="btn input-group-text"
+                                        title="افزودن منوی جدید">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <ul class="search-list">
@@ -64,7 +70,7 @@
             </div>
             <div class="col-8">
                 <div v-if="selectedSearchBarItem!=null && selectedSearchBarItem.LastItem.treeLevel!==4">
-                    <div>
+                    <div class=" alert alert-primary">
                         <i class="fa fa-sitemap" style="font-size: 13px"></i>
                         <span class="font-weight-bold"> {{getTitle()}}</span>
                     </div>
@@ -83,7 +89,7 @@
                             </button>
                         </div>
                     </div>
-                    <table class="children table table-striped">
+                    <table class="children table table-striped table-bordered table-sm">
                         <thead>
                         <tr>
                             <th>ردیف</th>
@@ -103,8 +109,41 @@
                             </td>
                             <td>
                                 <div>
-                                    <a @click="selectAsParent(row)"><i class="fa fa-sitemap fa-rotate-90"></i></a>
-                                    <a><i class="fa fa-times"></i></a>
+                                    <a class="btn-icon" @click="selectAsParent(row)"><i class="fa fa-sitemap fa-rotate-90"></i></a>
+                                    <a class="btn-icon" @click="editEntity(row)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn-icon" @click="deleteEntity(row)"><i class="fa fa-times"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div v-if="lastEntityModel!=null && selectedSearchBarItem!=null && selectedSearchBarItem.LastItem.treeLevel!==4">
+                    <div class="alert alert-primary">
+                        <i class="fa fa-sitemap" style="font-size: 13px"></i>
+                        <span class="font-weight-bold"> خصوصیات </span>{{selectedSearchBarItem.LastItem.name}} <i class="fa fa-edit" @click="editLastEntity()"></i>
+                    </div>
+                    <table v-if="lastEntityModel.classModel!=null" class="children table table-striped table-bordered table-sm">
+                        <thead>
+                        <tr>
+                            <th>ردیف</th>
+                            <th>نام</th>
+                            <th>مقدار</th>
+                            <th>عملیات</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr  v-for="p,i in lastEntityModel.classModel.properties">
+                            <td>{{i+1}}</td>
+                            <td>
+                                <span>{{p.name}}</span>
+                            </td>
+                            <td>
+                                <span>{{lastEntityModel.getValueOfProperty(p.id)}}</span>
+                            </td>
+                            <td>
+                                <div>
                                 </div>
                             </td>
                         </tr>
@@ -115,6 +154,9 @@
         </div>
         <loading :active.sync="isLoading"
                  :is-full-page="!isLoading"></loading>
+
+        <entity-edit-component ref="entityModal" :entity="newEntity"
+                               @entitySaved="newEntitySaved"></entity-edit-component>
     </div>
 </template>
 
@@ -122,20 +164,24 @@
     import Loading from 'vue-loading-overlay';
     import {searchBarModel} from "./models/searchBarModel";
     import {searchChildrenModel} from "./models/searchChildrenModel";
+    import EntityEditComponent from "./entityEditComponent";
+    import {entityModel} from "./models/entityModel";
 
     let context = {
         searchText: '',
         searchedArray: [],
         selectedSearchBarItem: null,
+        lastEntityModel:null,
         children: [],
         searchChildText: '',
+        newEntity: new entityModel(),
         isLoading: false,
         searchResult: []
     };
     let $vm = null;
     export default {
         name: "entityRoute",
-        components: {Loading},
+        components: {EntityEditComponent, Loading},
         data() {
             return context;
         },
@@ -172,19 +218,83 @@
                 this.isLoading = false;
             },
             async selectSearch(selectedSearchItem) {
-                this.selectedSearchBarItem = selectedSearchItem;
-                await this.doSearchChildren();
+                this.isLoading = true;
+                try{
+                    this.searchChildText = '';
+                    this.selectedSearchBarItem = selectedSearchItem;
+                    await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id,this.selectedSearchBarItem.LastItem.name);
+                    await this.doSearchChildren();
+                } catch(e){
+
+                }
+                this.isLoading = false;
+
             },
             closeBradCrumbClicked() {
                 this.searchText = '';
                 this.selectedSearchBarItem = null;
+                this.doSearch();
             },
-            addNewChildClicked() {
-
+            async addNewChildClicked() {
+                let levelId = this.selectedSearchBarItem.LastItem.treeLevel + 1;
+                let clsId = await entityModel.getClsIdsByLevel(levelId);
+                this.newEntity = new entityModel(levelId, clsId, this.selectedSearchBarItem.LastItem.id);
+                this.newEntity.name = this.searchTermText;
+                await this.newEntity.initFull();
+                this.$refs.entityModal.show();
+            },
+            async addNewMenuClicked() {
+                this.isLoading = true;
+                this.newEntity = new entityModel(1, await entityModel.getClsIdsByLevel(1), 0);
+                this.newEntity.name = this.searchTermText;
+                await this.newEntity.initFull();
+                this.isLoading = false;
+                this.$refs.entityModal.show();
+            },
+            async newEntitySaved() {
+                await this.doSearchChildren();
+            },
+            editLastEntity(){
+                this.newEntity = this.lastEntityModel;
+                this.$refs.entityModal.show();
+            },
+            async editEntity(entity) {
+                this.isLoading = true;
+                let levelId = this.selectedSearchBarItem.LastItem.treeLevel + 1;
+                let clsId = await entityModel.getClsIdsByLevel(levelId);
+                this.newEntity = new entityModel(levelId, clsId, this.selectedSearchBarItem.LastItem.id);
+                this.newEntity.name = entity.name;
+                this.newEntity.id = entity.id;
+                await this.newEntity.initFull();
+                this.isLoading = false;
+                this.$refs.entityModal.show();
+            },
+            async deleteEntity(e) {
+                this.isLoading = true;
+                if(confirm('آیا حذف شود؟')){
+                    await entityModel.deleteEntity(e.id);
+                    await this.doSearchChildren();
+                }
+                this.isLoading = false;
             },
             async selectAsParent(child) {
-                this.selectedSearchBarItem.addChild(child.id, child.name);
-                await this.doSearchChildren();
+                this.isLoading = true;
+                try{
+                    this.selectedSearchBarItem.addChild(child.id, child.name);
+                    await this.setLastEnitityModel(child.id,child.name);
+                    await this.doSearchChildren();
+                }catch(e){
+
+                }
+                this.isLoading = false;
+            },
+            async setLastEnitityModel(id,name){
+                let levelId = this.selectedSearchBarItem.LastItem.treeLevel;
+                let clsId = await entityModel.getClsIdsByLevel(levelId);
+                this.lastEntityModel = new entityModel(levelId, clsId);
+                this.lastEntityModel.name = name;
+                this.lastEntityModel.id = id;
+                await this.lastEntityModel.initFull();
             },
             async breadCrumbSelect(item) {
                 while (this.selectedSearchBarItem.LastItem !== null && this.selectedSearchBarItem.LastItem.id !== item.id) {
@@ -200,6 +310,19 @@
                         return "گروه ها";
                     case 3:
                         return "سوال ها";
+                }
+                return this.selectedSearchBarItem.LastItem.treeLevel;
+            },
+            getAddClassId() {
+                if (this.selectedSearchBarItem == null || this.selectedSearchBarItem.LastItem == null)
+                    return -1;
+                switch (this.selectedSearchBarItem.LastItem.treeLevel) {
+                    case 1:
+                        return 6;
+                    case 2:
+                        return 7;
+                    case 3:
+                        return 8;
                 }
                 return this.selectedSearchBarItem.LastItem.treeLevel;
             }
@@ -221,6 +344,11 @@
         padding: 2px;
         border-radius: 5px;
         background-color: rgba(199, 185, 255, 0.75);
+    }
+
+    ul.search-list li {
+        padding: 5px;
+        border-bottom: 1px solid #cccccc;
     }
 
     ul.search-list li span.bar-item {

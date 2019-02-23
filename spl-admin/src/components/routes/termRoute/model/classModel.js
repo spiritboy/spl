@@ -64,7 +64,6 @@ export class classModel {
             tmodel.propertiesString = v.Properties;
             return tmodel;
         });
-        console.log(db_classes)
         return classes;
     }
     static async Select(name, page, perpage) {

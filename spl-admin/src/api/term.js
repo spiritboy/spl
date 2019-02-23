@@ -58,6 +58,13 @@ export class term {
     }
 
     //////////////////
+    //////SelectClassEntity///////
+    //Expecting Name
+    ///obtaining levels(menu,group,cat,question) and their class id
+    static SelectClassEntity() {
+        return axios.get(config.webApi + '/api/v1/term/Class/SelectClassEntity/');
+    }
+    //////////////////
     //////ClassInsertEx///////
     //Expecting ClassID,Property,DataType
     static async ClassInsertEx(body) {
