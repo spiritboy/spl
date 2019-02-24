@@ -9,7 +9,6 @@ export class searchBarModel {
         this.id = null;
         this.pathIdString = '';
         this.pathNameString = '';
-        this.entityName = '';
         this.pathEntityNameString = '';
 
         this.treeLevel = null;
@@ -19,6 +18,9 @@ export class searchBarModel {
         return this.pathIdString.split('‰');
     }
 
+    get PathEntityNames() {
+        return this.pathEntityNameString.split('‰');
+    }
     get PathNames() {
         return this.pathNameString.split('‰');
     }
@@ -28,7 +30,7 @@ export class searchBarModel {
         let menu = new menuModel();
         menu.id = this.PathIDs[0];
         menu.name = this.PathNames[0];
-        menu.entityName = this.entityName;
+        menu.entityName = this.PathEntityNames[0];
         return menu;
     }
 
@@ -37,7 +39,7 @@ export class searchBarModel {
         let cat = new categoryModel();
         cat.id = this.PathIDs[1];
         cat.name = this.PathNames[1];
-        cat.entityName = this.entityName;
+        cat.entityName = this.PathEntityNames[1];
         return cat;
     }
 
@@ -46,7 +48,7 @@ export class searchBarModel {
         let group = new groupModel();
         group.id = this.PathIDs[2];
         group.name = this.PathNames[2];
-        group.entityName = this.entityName;
+        group.entityName = this.PathEntityNames[2];
         return group;
     }
 
@@ -55,7 +57,7 @@ export class searchBarModel {
         let question = new questionModel();
         question.id = this.PathIDs[3];
         question.name = this.PathNames[3];
-        question.entityName = this.entityName;
+        question.entityName = this.PathEntityNames[3];
         return question;
     }
 
@@ -68,9 +70,11 @@ export class searchBarModel {
     }
 
     addChild(id, name,entityName) {
+        console.log(this.pathEntityNameString)
+        this.pathEntityNameString += '‰' + entityName;
+        console.log(this.pathEntityNameString)
         this.pathIdString += '‰' + id;
         this.pathNameString += '‰' + name;
-        this.entityName = entityName;
     }
     popChild() {
         let pathIds = this.PathIDs;
@@ -80,13 +84,16 @@ export class searchBarModel {
         let pathNames = this.PathNames;
         pathNames.pop();
         this.pathNameString = pathNames.join('‰');
+
+        let pathEntityNames = this.PathEntityNames;
+        pathEntityNames.pop();
+        this.pathEntityNameString = pathEntityNames.join('‰');
     }
     deserialize(inp) {
         this.id = inp.BaseID;
         this.pathIdString = inp.PathID;
         this.pathNameString = inp.PathName;
         this.pathEntityNameString = inp.PathEntityName;
-        this.entityName = inp.EntityName;
         this.treeLevel = inp.TreeLevel;
         return this;
     }

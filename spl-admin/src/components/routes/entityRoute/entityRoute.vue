@@ -104,12 +104,13 @@
                             <td lang="en">
                                 <a href="#" @click="selectAsParent(row)"><span>{{row.entityName}}</span></a>
                             </td>
-                            <td >
+                            <td>
                                 <a href="#" @click="selectAsParent(row)"><span>{{row.name}}</span></a>
                             </td>
                             <td>
                                 <div>
-                                    <a class="btn-icon" @click="selectAsParent(row)"><i class="fa fa-sitemap fa-rotate-90"></i></a>
+                                    <a class="btn-icon" @click="selectAsParent(row)"><i
+                                            class="fa fa-sitemap fa-rotate-90"></i></a>
                                     <a class="btn-icon" @click="editEntity(row)"><i class="fa fa-edit"></i></a>
                                     <a class="btn-icon" @click="deleteEntity(row)"><i class="fa fa-times"></i></a>
                                 </div>
@@ -119,12 +120,17 @@
                     </table>
                 </div>
                 <hr>
-                <div v-if="lastEntityModel!=null && selectedSearchBarItem!=null && selectedSearchBarItem.LastItem.treeLevel!==4">
+                <div v-if="lastEntityModel!=null && selectedSearchBarItem!=null">
                     <div class="alert alert-primary">
                         <i class="fa fa-sitemap" style="font-size: 13px"></i>
-                        <span class="font-weight-bold"> خصوصیات </span>{{selectedSearchBarItem.LastItem.name}} <i class="fa fa-edit" @click="editLastEntity()"></i>
+                        <span class="font-weight-bold"> خصوصیات </span>{{selectedSearchBarItem.LastItem.name}} <i
+                            class="fa fa-edit" @click="editLastEntity()"></i>
+                        <button @click="deleteEntity(lastEntityModel,true)" style="position: absolute;left:10px"
+                                class="btn btn-sm btn-danger">حذف {{selectedSearchBarItem.LastItem.name}} <i
+                                class="fa fa-times"></i></button>
                     </div>
-                    <table v-if="lastEntityModel.classModel!=null" class="children table table-striped table-bordered table-sm">
+                    <table v-if="lastEntityModel.classModel!=null"
+                           class="children table table-striped table-bordered table-sm">
                         <thead>
                         <tr>
                             <th>ردیف</th>
@@ -134,7 +140,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr  v-for="p,i in lastEntityModel.classModel.properties">
+                        <tr v-for="p,i in lastEntityModel.classModel.properties">
                             <td>{{i+1}}</td>
                             <td lang="en">
                                 <span>{{p.name}}</span>
@@ -171,7 +177,7 @@
         searchText: '',
         searchedArray: [],
         selectedSearchBarItem: null,
-        lastEntityModel:null,
+        lastEntityModel: null,
         children: [],
         searchChildText: '',
         newEntity: new entityModel(),
@@ -219,12 +225,12 @@
             },
             async selectSearch(selectedSearchItem) {
                 this.isLoading = true;
-                try{
+                try {
                     this.searchChildText = '';
                     this.selectedSearchBarItem = selectedSearchItem;
-                    await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id,this.selectedSearchBarItem.LastItem.entityName);
+                    await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id, this.selectedSearchBarItem.LastItem.entityName);
                     await this.doSearchChildren();
-                } catch(e){
+                } catch (e) {
 
                 }
                 this.isLoading = false;
@@ -254,7 +260,7 @@
             async newEntitySaved() {
                 await this.doSearchChildren();
             },
-            editLastEntity(){
+            editLastEntity() {
                 this.newEntity = this.lastEntityModel;
                 this.$refs.entityModal.show();
             },
@@ -269,26 +275,37 @@
                 this.isLoading = false;
                 this.$refs.entityModal.show();
             },
-            async deleteEntity(e) {
+            async deleteEntity(e, selectPreviousItem) {
                 this.isLoading = true;
-                if(confirm('آیا حذف شود؟')){
-                    await entityModel.deleteEntity(e.id);
-                    await this.doSearchChildren();
+                if (confirm('آیا حذف شود؟')) {
+                    if ((await entityModel.deleteEntity(e.id)).process()) {
+                        if (selectPreviousItem) {
+                            if (this.selectedSearchBarItem.LastItem !== null) {
+                                this.selectedSearchBarItem.popChild();
+                                if (this.selectedSearchBarItem.LastItem != null)
+                                    await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id, this.selectedSearchBarItem.LastItem.entityName);
+                                else
+                                    this.closeBradCrumbClicked();
+                            }
+
+                        }
+                        await this.doSearchChildren();
+                    }
                 }
                 this.isLoading = false;
             },
             async selectAsParent(child) {
                 this.isLoading = true;
-                try{
-                    this.selectedSearchBarItem.addChild(child.id, child.name);
-                    await this.setLastEnitityModel(child.id,child.entityName);
+                try {
+                    this.selectedSearchBarItem.addChild(child.id,child.name, child.entityName);
+                    await this.setLastEnitityModel(child.id, child.entityName);
                     await this.doSearchChildren();
-                }catch(e){
+                } catch (e) {
 
                 }
                 this.isLoading = false;
             },
-            async setLastEnitityModel(id,name){
+            async setLastEnitityModel(id, name) {
                 let levelId = this.selectedSearchBarItem.LastItem.treeLevel;
                 let clsId = await entityModel.getClsIdsByLevel(levelId);
                 this.lastEntityModel = new entityModel(levelId, clsId);
@@ -300,6 +317,7 @@
                 while (this.selectedSearchBarItem.LastItem !== null && this.selectedSearchBarItem.LastItem.id !== item.id) {
                     this.selectedSearchBarItem.popChild();
                 }
+                await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id, this.selectedSearchBarItem.LastItem.entityName);
                 await this.doSearchChildren();
             },
             getTitle() {
