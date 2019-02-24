@@ -20,6 +20,7 @@
                                 <option value="string">رشته</option>
                                 <option value="number">عدد</option>
                                 <option value="date">تاریخ</option>
+                                <option value="fieldInfo">fieldInfo</option>
                                 <option value="lookup">look up</option>
                             </select>
                         </div>
@@ -50,6 +51,11 @@
                             <input v-model="ext.isId" type="checkbox" class="form-check-input"
                                    id="isId">
                             <label class="form-check-label" for="isId">شناسه</label>
+                        </div>
+                        <div class="form-check">
+                            <input v-model="ext.isIdentity" type="checkbox" class="form-check-input"
+                                   id="isIdentity">
+                            <label class="form-check-label" for="isId">شمارانداز</label>
                         </div>
                         <div class="form-group">
                         </div>
@@ -122,12 +128,13 @@
                 $(this.$refs.modal).modal('show');
             },
             async popUpOkClicked() {
-                $(this.$refs.modal).modal('hide');
                 if (this.ext.id === 0) {
                     //add
                     if ((await this.parentClass.insertExt(this.ext)).process()) {
                         this.parentClass.properties.push(this.ext);
                         this.$emit('popupClosed', 'insert');
+                        console.log(1)
+                        $(this.$refs.modal).modal('hide');
                     }
                     else
                         this.$emit('popupClosed', 'failed');
@@ -136,7 +143,8 @@
                     //update ext
                     if ((await this.ext.update()).process()) {
                         this.$emit('popupClosed', 'update');
-
+                        console.log(2)
+                        $(this.$refs.modal).modal('hide');
                     }
                     else
                         this.$emit('popupClosed', 'failed');

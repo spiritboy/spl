@@ -18,7 +18,11 @@
                 </li>
                 <li class="breadcrumb-item"
                     v-if="selectedSearchBarItem!=null && selectedSearchBarItem.QuestionItem!=null">
-                    <a href="#">{{selectedSearchBarItem.QuestionItem.name}}</a>
+                    <a @click="breadCrumbSelect(selectedSearchBarItem.QuestionItem)" href="#">{{selectedSearchBarItem.QuestionItem.name}}</a>
+                </li>
+                <li class="breadcrumb-item"
+                    v-if="selectedSearchBarItem!=null && selectedSearchBarItem.SubQuestionItem!=null">
+                    <a @click="breadCrumbSelect(selectedSearchBarItem.SubQuestionItem)" href="#">{{selectedSearchBarItem.SubQuestionItem.name}}</a>
                 </li>
             </ol>
         </nav>
@@ -64,12 +68,17 @@
                                   :class="{'found':searchBar.QuestionItem!=null && searchBar.id.toString() === searchBar.QuestionItem.id.toString()}">
                                 {{searchBar.QuestionItem.name}}
                            </span>
+                            <i v-if="searchBar.SubQuestionItem!=null" class="fa fa-chevron-left"></i>
+                            <span class="bar-item" v-if="searchBar.SubQuestionItem!=null"
+                                  :class="{'found':searchBar.SubQuestionItem!=null && searchBar.id.toString() === searchBar.SubQuestionItem.id.toString()}">
+                                {{searchBar.SubQuestionItem.name}}
+                           </span>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="col-9">
-                <div v-if="selectedSearchBarItem!=null && selectedSearchBarItem.LastItem.treeLevel!==4">
+                <div v-if="selectedSearchBarItem!=null && selectedSearchBarItem.LastItem.treeLevel!==5">
                     <div class=" alert alert-primary">
                         <i class="fa fa-sitemap" style="font-size: 13px"></i>
                         <span class="font-weight-bold"> {{getTitle()}}</span>
@@ -163,6 +172,7 @@
 
         <entity-edit-component ref="entityModal" :entity="newEntity"
                                @entitySaved="newEntitySaved"></entity-edit-component>
+
     </div>
 </template>
 
@@ -269,7 +279,7 @@
                 let levelId = this.selectedSearchBarItem.LastItem.treeLevel + 1;
                 let clsId = await entityModel.getClsIdsByLevel(levelId);
                 this.newEntity = new entityModel(levelId, clsId, this.selectedSearchBarItem.LastItem.id);
-                this.newEntity.name = entity.entitiyName;
+                this.newEntity.name = entity.entityName;
                 this.newEntity.id = entity.id;
                 await this.newEntity.initFull();
                 this.isLoading = false;
@@ -314,11 +324,13 @@
                 await this.lastEntityModel.initFull();
             },
             async breadCrumbSelect(item) {
+                this.isLoading = true;
                 while (this.selectedSearchBarItem.LastItem !== null && this.selectedSearchBarItem.LastItem.id !== item.id) {
                     this.selectedSearchBarItem.popChild();
                 }
                 await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id, this.selectedSearchBarItem.LastItem.entityName);
                 await this.doSearchChildren();
+                this.isLoading = false;
             },
             getTitle() {
                 switch (this.selectedSearchBarItem.LastItem.treeLevel) {
@@ -328,6 +340,8 @@
                         return "گروه ها";
                     case 3:
                         return "سوال ها";
+                    case 4:
+                        return "زیر سوال ها";
                 }
                 return this.selectedSearchBarItem.LastItem.treeLevel;
             },
@@ -375,7 +389,7 @@
     }
 
     ul.search-list li span.found {
-        text-decoration: underline;
+        color: red;
         font-size: 17px;
     }
 </style>

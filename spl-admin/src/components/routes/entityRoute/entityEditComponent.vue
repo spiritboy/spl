@@ -1,6 +1,6 @@
 <template>
     <div class="modal fade" role="dialog" aria-hidden="true" ref="modal" v-if="entity!=null">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <span>ایجاد </span>
@@ -42,6 +42,12 @@
                                         <sup v-if="property.isRequired" class="fa fa-asterisk"></sup>
                                     </label>
                                     <input v-model="entity.extendeds[i].name" type="date" class="form-control"/>
+                                </div>
+                                <div v-else-if="property.dataType === 'fieldInfo'">
+                                    <label class="control-label">
+                                        نوع فیلد <i class="fa fa-i-cursor"></i>
+                                    </label>
+                                    <FieldInfoComponent></FieldInfoComponent>
                                 </div>
                                 <div v-else-if="property.dataType === 'lookup'">
                                     <label class="control-label">
@@ -102,7 +108,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -112,28 +117,29 @@
     import {term} from "../../../api/term";
     import {similarModel} from "./models/similarModel";
     import {searchBarModel} from "./models/searchBarModel";
+    import {entityModel} from "./models/entityModel";
+    import FieldInfoComponent from "./FieldInfoComponent";
 
     export default {
         name: "entityEditComponent",
-        components: {Select2},
+        components: {FieldInfoComponent, Select2},
         props: ["entity"],
         data() {
             return {
                 errors: [],
                 similarProperties: [],
-                selectedSimilar : null
+                selectedSimilar: null
             }
         },
         methods: {
             async nameChanged() {
-                this.similarProperties = (await entity.SelectSimilar(this.entity.levelId,this.entity.parentId, this.entity.name)).data.map(v=>new searchBarModel().deserialize(v));
-                console.log(this.similarProperties)
+                this.similarProperties = (await entity.SelectSimilar(this.entity.levelId, this.entity.parentId, this.entity.name)).data.map(v => new searchBarModel().deserialize(v));
             },
             show() {
                 this.similarProperties = [];
                 //this.selectedSimilar = null
                 $(this.$refs.modal).modal('show');
-                if(this.entity && this.entity.name)
+                if (this.entity && this.entity.name)
                     this.nameChanged();
             },
             async doSearchTerms(q, pp, pn, state) {
@@ -151,22 +157,28 @@
                     $(this.$refs.modal).modal('hide');
                 }
             },
-            selectSimilar(searchBar){
-
+            async selectSimilar(searchBar) {
+                let d = await entityModel.insertSimilar(searchBar.id, this.entity.parentId);
+                if (d.process()) {
+                    $(this.$refs.modal).modal('hide');
+                    this.$emit('entitySaved', this.entity, false);
+                }
             }
         }
     }
 </script>
 
 <style scoped>
-    .similar li{
+    .similar li {
         cursor: pointer;
         list-style: none;
     }
-    .similar li.active{
+
+    .similar li.active {
         background-color: rgb(231, 231, 231);
     }
-    .similar li:hover{
+
+    .similar li:hover {
         background-color: rgba(155, 154, 255, 0.41);
     }
 </style>

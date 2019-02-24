@@ -3,6 +3,7 @@ import {categoryModel} from "./categoryModel";
 import {groupModel} from "./groupModel";
 import {questionModel} from "./questionModel";
 import {entity} from "../../../../api/entity";
+import {subQuestionModel} from "./subQuestionModel";
 
 export class searchBarModel {
     constructor() {
@@ -60,8 +61,17 @@ export class searchBarModel {
         question.entityName = this.PathEntityNames[3];
         return question;
     }
-
+    get SubQuestionItem() {
+        if (this.PathIDs.length <= 4) return null;
+        let squestion = new subQuestionModel();
+        squestion.id = this.PathIDs[4];
+        squestion.name = this.PathNames[4];
+        squestion.entityName = this.PathEntityNames[4];
+        return squestion;
+    }
     get LastItem() {
+        if (this.SubQuestionItem != null) return this.SubQuestionItem;
+        if (this.QuestionItem != null) return this.QuestionItem;
         if (this.QuestionItem != null) return this.QuestionItem;
         if (this.GroupItem != null) return this.GroupItem;
         if (this.CategoryItem != null) return this.CategoryItem;
@@ -70,9 +80,7 @@ export class searchBarModel {
     }
 
     addChild(id, name,entityName) {
-        console.log(this.pathEntityNameString)
         this.pathEntityNameString += '‰' + entityName;
-        console.log(this.pathEntityNameString)
         this.pathIdString += '‰' + id;
         this.pathNameString += '‰' + name;
     }

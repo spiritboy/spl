@@ -52,6 +52,7 @@
                             <th>نام</th>
                             <th>نوع داده</th>
                             <th>اجباری</th>
+                            <th>شماره انداز</th>
                             <th>چند مقدرای</th>
                             <th>قابل جستجو</th>
                             <th></th>
@@ -64,6 +65,10 @@
                             <td>{{p.classRefName? p.classRefName:p.dataType}}</td>
                             <td>
                                 <i v-if="p.isRequired" class="fa fa-check"></i>
+                                <i v-else></i>
+                            </td>
+                            <td>
+                                <i v-if="p.isIdentity" class="fa fa-check"></i>
                                 <i v-else></i>
                             </td>
                             <td>
@@ -91,10 +96,13 @@
             </div>
 
         </div>
+        <loading :active.sync="isLoading"
+                 :is-full-page="!isLoading"></loading>
     </div>
 </template>
 
 <script>
+    import Loading from 'vue-loading-overlay';
     import {classModel} from "../model/classModel";
     import {classExtModel} from "../model/classExtModel";
     import ClassExtComponent from "./classExtComponent";
@@ -103,12 +111,13 @@
         searchedClasses: [],
         selectedClass: null,
         searchText: '',
+        isLoading:false,
         selectedProperty: null,
         newProperty: null
     }
     export default {
         name: "classComponent",
-        components: {ClassExtComponent},
+        components: {ClassExtComponent,Loading},
         data() {
             return context;
         },
@@ -116,15 +125,19 @@
             this.doSearch();
         },
         methods: {
-            doSearch() {
+            async doSearch() {
+                this.isLoading = true;
                 this.selectedClass = null;
-                classModel.Select(this.searchText, 1, 100).then(d => this.searchedClasses = d);
+                this.searchedClasses = await classModel.Select(this.searchText, 1, 100);
+                this.isLoading = false;
             },
             async selectClass(cls) {
+                this.isLoading = true;
                 this.selectedClass = null;
                 this.selectedProperty = null;
                 await cls.loadProperties();
                 this.selectedClass = cls;
+                this.isLoading = false;
             },
             addPropertyClicked() {
                 this.newProperty = new classExtModel();
@@ -135,21 +148,28 @@
                 (this.$refs['el' + p.id.toString()][0]).show();
             },
             async addClassClicked() {
+                this.isLoading = true;
                 this.selectedClass = new classModel();
                 this.selectedClass.name = this.searchText;
                 await this.saveClassClicked()
+                this.isLoading = false;
             },
             async deleteClassClicked() {
+                this.isLoading = true;
                 if ((await this.selectedClass.delete()).process()) {
                     this.searchedClasses.splice(this.searchedClasses.indexOf(this.selectedClass), 1);
                     this.selectedClass = null;
                 }
+                this.isLoading = false;
             },
             async removePropertyClicked(p) {
+                this.isLoading = true;
                 if ((await this.selectedClass.deleteExt(p.id)).process())
                     this.selectedClass.properties.splice(this.selectedClass.properties.indexOf(p), 1);
+                this.isLoading = false;
             },
             async saveClassClicked() {
+                this.isLoading = true;
                 if (this.selectedClass.id === 0) {
                     //add
                     if ((await this.selectedClass.insert()).process())
@@ -161,6 +181,7 @@
 
                     }
                 }
+                this.isLoading = false;
             },
             popupClosed(mode) {
                 if (mode === 'update') {
@@ -170,7 +191,7 @@
 
                 }
                 else if (mode === 'failed') {
-                    this.selectClass(this.selectedClass);
+                    //this.selectClass(this.selectedClass);
                 }
             }
         },

@@ -2,6 +2,7 @@ import {classModel} from "../../termRoute/model/classModel";
 import {entity} from "../../../../api/entity";
 import {entityExtModel} from "./entityExtModel";
 import {term} from "../../../../api/term";
+import {dbMessage} from "../../../shared/dbMessage";
 
 export class entityModel {
     constructor(levelId, clsId, parentId) {
@@ -31,13 +32,15 @@ export class entityModel {
             this.extendeds.push(ext);
         }
     }
-    getValueOfProperty(pid){
+
+    getValueOfProperty(pid) {
         for (let ext of this.extendeds) {
-            if(pid.toString() === ext.classExtModel.id.toString()){
+            if (pid.toString() === ext.classExtModel.id.toString()) {
                 return ext.name;
             }
         }
     }
+
     get values() {
         let str = [];
         for (let i in this.classModel.properties) {
@@ -67,6 +70,11 @@ export class entityModel {
 
     static async deleteEntity(id) {
         return await entity.EntitiyDelete(id);
+    }
+
+    static async insertSimilar(id, parentId) {
+        let x = await entity.InsertSimilar(id, parentId);
+        return x;
     }
 
     static async getClsIdsByLevel(level) {
