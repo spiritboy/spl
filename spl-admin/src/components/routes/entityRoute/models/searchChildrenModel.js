@@ -2,12 +2,12 @@ import {entity} from "../../../../api/entity";
 
 export class searchChildrenModel{
     constructor(){
-        this.caption = null;
+        this.entityName = null;
         this.name = null;
         this.id = null;
     }
     deserialize(inp){
-        this.caption = inp.Caption;
+        this.entityName = inp.EntityName;
         this.name = inp.Name;
         this.id = inp.ID;
         return this;

@@ -9,6 +9,9 @@ export class searchBarModel {
         this.id = null;
         this.pathIdString = '';
         this.pathNameString = '';
+        this.entityName = '';
+        this.pathEntityNameString = '';
+
         this.treeLevel = null;
     }
 
@@ -25,6 +28,7 @@ export class searchBarModel {
         let menu = new menuModel();
         menu.id = this.PathIDs[0];
         menu.name = this.PathNames[0];
+        menu.entityName = this.entityName;
         return menu;
     }
 
@@ -33,6 +37,7 @@ export class searchBarModel {
         let cat = new categoryModel();
         cat.id = this.PathIDs[1];
         cat.name = this.PathNames[1];
+        cat.entityName = this.entityName;
         return cat;
     }
 
@@ -41,6 +46,7 @@ export class searchBarModel {
         let group = new groupModel();
         group.id = this.PathIDs[2];
         group.name = this.PathNames[2];
+        group.entityName = this.entityName;
         return group;
     }
 
@@ -49,6 +55,7 @@ export class searchBarModel {
         let question = new questionModel();
         question.id = this.PathIDs[3];
         question.name = this.PathNames[3];
+        question.entityName = this.entityName;
         return question;
     }
 
@@ -60,9 +67,10 @@ export class searchBarModel {
         return null;
     }
 
-    addChild(id, name) {
+    addChild(id, name,entityName) {
         this.pathIdString += '‰' + id;
         this.pathNameString += '‰' + name;
+        this.entityName = entityName;
     }
     popChild() {
         let pathIds = this.PathIDs;
@@ -77,6 +85,8 @@ export class searchBarModel {
         this.id = inp.BaseID;
         this.pathIdString = inp.PathID;
         this.pathNameString = inp.PathName;
+        this.pathEntityNameString = inp.PathEntityName;
+        this.entityName = inp.EntityName;
         this.treeLevel = inp.TreeLevel;
         return this;
     }

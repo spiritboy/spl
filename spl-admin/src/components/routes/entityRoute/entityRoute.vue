@@ -23,7 +23,7 @@
             </ol>
         </nav>
         <div class="row">
-            <div class="col-4">
+            <div class="col-3">
                 <div class="class-ext">
                     <div class="input-group mb-6">
                         <input v-model="searchText" @input="debounceDoSearch" type="text" class="form-control"
@@ -68,7 +68,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-8">
+            <div class="col-9">
                 <div v-if="selectedSearchBarItem!=null && selectedSearchBarItem.LastItem.treeLevel!==4">
                     <div class=" alert alert-primary">
                         <i class="fa fa-sitemap" style="font-size: 13px"></i>
@@ -101,11 +101,11 @@
                         <tbody>
                         <tr v-for="row,i in children">
                             <td>{{i+1}}</td>
-                            <td>
-                                <a href="#" @click="selectAsParent(row)"><span>{{row.name}}</span></a>
+                            <td lang="en">
+                                <a href="#" @click="selectAsParent(row)"><span>{{row.entityName}}</span></a>
                             </td>
-                            <td>
-                                <a href="#" @click="selectAsParent(row)"><span>{{row.caption}}</span></a>
+                            <td >
+                                <a href="#" @click="selectAsParent(row)"><span>{{row.name}}</span></a>
                             </td>
                             <td>
                                 <div>
@@ -136,7 +136,7 @@
                         <tbody>
                         <tr  v-for="p,i in lastEntityModel.classModel.properties">
                             <td>{{i+1}}</td>
-                            <td>
+                            <td lang="en">
                                 <span>{{p.name}}</span>
                             </td>
                             <td>
@@ -222,7 +222,7 @@
                 try{
                     this.searchChildText = '';
                     this.selectedSearchBarItem = selectedSearchItem;
-                    await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id,this.selectedSearchBarItem.LastItem.name);
+                    await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id,this.selectedSearchBarItem.LastItem.entityName);
                     await this.doSearchChildren();
                 } catch(e){
 
@@ -263,7 +263,7 @@
                 let levelId = this.selectedSearchBarItem.LastItem.treeLevel + 1;
                 let clsId = await entityModel.getClsIdsByLevel(levelId);
                 this.newEntity = new entityModel(levelId, clsId, this.selectedSearchBarItem.LastItem.id);
-                this.newEntity.name = entity.name;
+                this.newEntity.name = entity.entitiyName;
                 this.newEntity.id = entity.id;
                 await this.newEntity.initFull();
                 this.isLoading = false;
@@ -281,7 +281,7 @@
                 this.isLoading = true;
                 try{
                     this.selectedSearchBarItem.addChild(child.id, child.name);
-                    await this.setLastEnitityModel(child.id,child.name);
+                    await this.setLastEnitityModel(child.id,child.entityName);
                     await this.doSearchChildren();
                 }catch(e){
 
@@ -343,12 +343,12 @@
         border: 1px solid lightgray;
         padding: 2px;
         border-radius: 5px;
-        background-color: rgba(199, 185, 255, 0.75);
+        background-color: #cce5ff;
     }
 
     ul.search-list li {
         padding: 5px;
-        border-bottom: 1px solid #cccccc;
+        border-bottom: 1px solid #eaeaea;
     }
 
     ul.search-list li span.bar-item {

@@ -54,7 +54,9 @@
     * {
         font-family: "B Koodak",serif;
     }
-
+    *:lang(en) 	{
+        font-family: arial,serif;
+    }
     .btn-add {
         margin: 15px;
         display: block;

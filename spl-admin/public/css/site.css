@@ -32,8 +32,9 @@
 }
 
 .search-list li.active {
-    background-color: #6066cc;
-    color: white;
+    color: #004085;
+    background-color: #cce5ff;
+    font-weight: bold;
 }
 
 .class-ext {
