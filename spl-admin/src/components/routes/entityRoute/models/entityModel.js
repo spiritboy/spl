@@ -26,9 +26,11 @@ export class entityModel {
         for (let p of this.classModel.properties) {
             let _dbExt = _dbEntityExts.filter(db => db.ClassExID.toString() === p.id.toString())[0];
             let ext = new entityExtModel();
-            ext.id = _dbExt ? _dbExt.ID : null;
-            ext.name = _dbExt ? _dbExt.Value : null;
             ext.classExtModel = p;
+            if(_dbExt!=null){
+                _dbExt.Name = _dbExt.Value;
+                ext = new entityExtModel().deserialize(_dbExt,p);
+            }
             this.extendeds.push(ext);
         }
     }
@@ -36,7 +38,10 @@ export class entityModel {
     getValueOfProperty(pid) {
         for (let ext of this.extendeds) {
             if (pid.toString() === ext.classExtModel.id.toString()) {
-                return ext.name;
+                if(ext.classExtModel.dataType === 'fieldInfo')
+                    return ext.fieldInfo;
+                else
+                    return ext.name;
             }
         }
     }
@@ -47,7 +52,7 @@ export class entityModel {
             str.push(this.classModel.properties[i].id);
             str.push(this.extendeds[i].name);
         }
-        return str.join(',');
+        return str.join('‰');
     }
 
     async insertUpdate() {
@@ -62,7 +67,7 @@ export class entityModel {
     isValid() {
         if (!this.name) return false;
         for (let i in this.classModel.properties) {
-            if (this.classModel.properties[i].isRequired && !this.extendeds[i].name)
+            if (this.classModel.properties[i].dataType !=='fieldInfo' && this.classModel.properties[i].isRequired && !this.extendeds[i].name)
                 return false;
         }
         return true;

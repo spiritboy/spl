@@ -17,6 +17,7 @@ const routes = [
     { path: '/term/class', component: classRoute },
 ];
 const router = new VueRouter({
+    mode:'history',
     routes // short for `routes: routes`
 });
 Vue.use(VueRouter)

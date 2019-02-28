@@ -165,6 +165,7 @@
                         </tbody>
                     </table>
                 </div>
+                <hr>
             </div>
         </div>
         <loading :active.sync="isLoading"
@@ -172,7 +173,6 @@
 
         <entity-edit-component ref="entityModal" :entity="newEntity"
                                @entitySaved="newEntitySaved"></entity-edit-component>
-
     </div>
 </template>
 
@@ -182,6 +182,8 @@
     import {searchChildrenModel} from "./models/searchChildrenModel";
     import EntityEditComponent from "./entityEditComponent";
     import {entityModel} from "./models/entityModel";
+    import config from "../../../config";
+    import FieldInfo from "./fields/FieldInfo";
 
     let context = {
         searchText: '',
@@ -197,7 +199,7 @@
     let $vm = null;
     export default {
         name: "entityRoute",
-        components: {EntityEditComponent, Loading},
+        components: {FieldInfo, EntityEditComponent, Loading},
         data() {
             return context;
         },
@@ -217,7 +219,7 @@
                     this.isLoading = true;
                     this.searchedArray = [];
                     this.selectedSearchBarItem = null;
-                    this.searchedArray = await searchBarModel.searchTree(this.searchText, 100, 1);
+                    this.searchedArray = await searchBarModel.searchTree(this.searchText, config.pp, 1);
                 } catch (e) {
 
                 }
@@ -227,7 +229,7 @@
                 try {
                     this.isLoading = true;
                     this.children = [];
-                    this.children = await searchChildrenModel.children(this.selectedSearchBarItem.LastItem.id, this.searchChildText, 100, 1);
+                    this.children = await searchChildrenModel.children(this.selectedSearchBarItem.LastItem.id, this.searchChildText, config.pp, 1);
                 } catch (e) {
 
                 }
@@ -307,7 +309,7 @@
             async selectAsParent(child) {
                 this.isLoading = true;
                 try {
-                    this.selectedSearchBarItem.addChild(child.id,child.name, child.entityName);
+                    this.selectedSearchBarItem.addChild(child.id, child.name, child.entityName);
                     await this.setLastEnitityModel(child.id, child.entityName);
                     await this.doSearchChildren();
                 } catch (e) {
@@ -317,8 +319,9 @@
             },
             async setLastEnitityModel(id, name) {
                 let levelId = this.selectedSearchBarItem.LastItem.treeLevel;
+                let parentId = (this.selectedSearchBarItem.SecondLastItem != null ? this.selectedSearchBarItem.SecondLastItem.id : null);
                 let clsId = await entityModel.getClsIdsByLevel(levelId);
-                this.lastEntityModel = new entityModel(levelId, clsId);
+                this.lastEntityModel = new entityModel(levelId, clsId, parentId);
                 this.lastEntityModel.name = name;
                 this.lastEntityModel.id = id;
                 await this.lastEntityModel.initFull();
@@ -328,6 +331,7 @@
                 while (this.selectedSearchBarItem.LastItem !== null && this.selectedSearchBarItem.LastItem.id !== item.id) {
                     this.selectedSearchBarItem.popChild();
                 }
+                console.log(this.selectedSearchBarItem.LastItem)
                 await this.setLastEnitityModel(this.selectedSearchBarItem.LastItem.id, this.selectedSearchBarItem.LastItem.entityName);
                 await this.doSearchChildren();
                 this.isLoading = false;

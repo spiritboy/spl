@@ -72,13 +72,19 @@ export class searchBarModel {
     get LastItem() {
         if (this.SubQuestionItem != null) return this.SubQuestionItem;
         if (this.QuestionItem != null) return this.QuestionItem;
-        if (this.QuestionItem != null) return this.QuestionItem;
         if (this.GroupItem != null) return this.GroupItem;
         if (this.CategoryItem != null) return this.CategoryItem;
         if (this.MenuItem != null) return this.MenuItem;
         return null;
     }
-
+    get SecondLastItem() {
+        if (this.SubQuestionItem != null) return this.QuestionItem;
+        if (this.QuestionItem != null) return this.GroupItem;
+        if (this.GroupItem != null) return this.CategoryItem;
+        if (this.CategoryItem != null) return this.MenuItem;
+        if (this.MenuItem != null) return null;
+        return null;
+    }
     addChild(id, name,entityName) {
         this.pathEntityNameString += '‰' + entityName;
         this.pathIdString += '‰' + id;

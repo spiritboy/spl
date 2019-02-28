@@ -47,14 +47,14 @@
                                     <label class="control-label">
                                         نوع فیلد <i class="fa fa-i-cursor"></i>
                                     </label>
-                                    <FieldInfoComponent></FieldInfoComponent>
+                                    <FieldInfo v-model="entity.extendeds[i].fieldInfo"></FieldInfo>
                                 </div>
                                 <div v-else-if="property.dataType === 'lookup'">
                                     <label class="control-label">
                                         <span>{{property.name}} </span>
                                         <sup v-if="property.isRequired" class="fa fa-asterisk"></sup>
                                     </label>
-                                    <Select2 v-model="entity.extendeds[i].name" class="form-control"
+                                    <Select2 v-model="entity.extendeds[i].fieldInfo" class="form-control"
                                              :multiple="entity.extendeds[i].classExtModel.isMultiSelect"
                                              :options="[{id:entity.extendeds[i].id,text:entity.extendeds[i].name}]"
                                              :api="doSearchTerms"
@@ -115,14 +115,13 @@
     import Select2 from "../../shared/Select2";
     import {entity} from "../../../api/entity";
     import {term} from "../../../api/term";
-    import {similarModel} from "./models/similarModel";
     import {searchBarModel} from "./models/searchBarModel";
     import {entityModel} from "./models/entityModel";
-    import FieldInfoComponent from "./FieldInfoComponent";
+    import FieldInfo from "./fields/FieldInfo";
 
     export default {
         name: "entityEditComponent",
-        components: {FieldInfoComponent, Select2},
+        components: {FieldInfo, Select2},
         props: ["entity"],
         data() {
             return {

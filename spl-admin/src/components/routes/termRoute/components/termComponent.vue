@@ -84,6 +84,7 @@
     import {termModel} from "../model/termModel";
     import Loading from 'vue-loading-overlay';
     import 'vue-loading-overlay/dist/vue-loading.css';
+    import config from "../../../../config";
 
     let context = {
         searchedClasses: [],
@@ -114,7 +115,7 @@
                     this.isLoading = true;
                     this.searchedTerms = [];
                     this.selectedSearch = null;
-                    this.searchedClasses = await termModel.SearchClassAndTerms(this.searchText, 1, 100);
+                    this.searchedClasses = await termModel.SearchClassAndTerms(this.searchText, 1, config.pp);
                 } catch (e) {
 
                 }
