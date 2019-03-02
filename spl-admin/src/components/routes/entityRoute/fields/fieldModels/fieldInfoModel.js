@@ -1,4 +1,6 @@
 import {fontModel} from "./fontModel";
+import {listInfoModel} from "./listInfoModel";
+import {textFieldInfoModel} from "./textFieldInfoModel";
 
 export class fieldInfoModel {
     constructor() {
@@ -11,15 +13,22 @@ export class fieldInfoModel {
         this.direction = "rtl";
         this.numericShape = "farsi";
         this.language = "farsi";
-        this.customProperties = null;
+        this.custom = null;
     }
     get fieldType(){
         return this._fieldType;
     }
     set fieldType(v){
+        if(v === 'list')
+            this.custom = new listInfoModel();
+        else if(v === 'text')
+            this.custom = new textFieldInfoModel();
+
         this._fieldType = v;
     }
     deserialize(inp) {
+        if (inp && inp._fieldType)
+            this.fieldType = inp._fieldType;
         if (inp && inp.tabStop)
             this.tabStop = inp.tabStop;
         if (inp && inp.lock)
@@ -36,6 +45,8 @@ export class fieldInfoModel {
             this.language = inp.language;
         if (inp && inp.font)
             this.font = new fontModel().deserialize(inp.font);
+        if (inp && inp.custom)
+            this.custom.deserialize(inp.custom);
 
         return this;
     }

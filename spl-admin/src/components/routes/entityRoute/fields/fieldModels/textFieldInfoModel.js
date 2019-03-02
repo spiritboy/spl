@@ -3,4 +3,8 @@ export class textFieldInfoModel{
         this.mask = '';
         this.includeLiteralsInValue = false;
     }
+    deserialize(inp){
+        this.mask = inp.mask;
+        this.includeLiteralsInValue = inp.includeLiteralsInValue;
+    }
 }

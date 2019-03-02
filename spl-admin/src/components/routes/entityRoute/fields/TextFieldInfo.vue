@@ -3,10 +3,10 @@
         <div class="form-row align-items-center">
             <div class="col-auto">
                 <label for="mask">ماسک</label>
-                <input  type="text" class="form-control mb-2" id="mask">
+                <input  v-model="value.mask" type="text" class="form-control mb-2" id="mask">
             </div>
             <div class="form-check form-check-inline" style="margin-top: 25px">
-                <input type="checkbox" class="form-check-input"
+                <input v-model="value.includeLiteralsInValue" type="checkbox" class="form-check-input"
                        id="includeLiteralsInValue">
                 <label class="form-check-label" for="includeLiteralsInValue">includeLiteralsInValue</label>
             </div>

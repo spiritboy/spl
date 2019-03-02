@@ -6,14 +6,17 @@ export class entityExtModel {
         this.id = null;
         this.classExtModel = null;
         this.name = null;
-        this.fieldInfo = new fieldInfoModel();
+        this.fieldInfo = null;
     }
 
     deserialize(inp, clsModel) {
         this.id = inp.ID;
         this.name = inp.Name;
         this.classExtModel = clsModel;
-        this.fieldInfo = new fieldInfoModel().deserialize(inp.fieldInfo);
+        if (this.classExtModel.dataType === 'fieldInfo') {
+            this.fieldInfo = new fieldInfoModel().deserialize(JSON.parse(inp.Value));
+            console.log(JSON.parse(inp.Value))
+        }
 
         return this;
     }

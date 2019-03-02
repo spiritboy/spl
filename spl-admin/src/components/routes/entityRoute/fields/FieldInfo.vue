@@ -1,5 +1,5 @@
 <template>
-    <div style="border:1px dashed black;padding:10px;">
+    <div style="border:1px dashed black;padding:10px;" v-if="value!=null">
         <div class="form-group">
             <label class="control-label">
                 نوع فیلد <i class="fa fa-i-cursor"></i>
@@ -30,10 +30,10 @@
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <generic-field-info :value="value"></generic-field-info>
             </div>
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                <text-field-info  v-if="value.fieldType === 'text'"></text-field-info>
-                <list-field-info  v-if="value.fieldType === 'list'"></list-field-info>
-                <date-field-info  v-if="value.fieldType === 'date'"></date-field-info>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab" v-if="value.custom!=null">
+                <text-field-info v-model="value.custom" v-if="value.fieldType === 'text'"></text-field-info>
+                <list-field-info v-model="value.custom" v-if="value.fieldType === 'list'" ></list-field-info>
+                <date-field-info v-model="value.custom" v-if="value.fieldType === 'date'"></date-field-info>
             </div>
         </div>
 

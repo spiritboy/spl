@@ -45,7 +45,6 @@
                                 </div>
                                 <div v-else-if="property.dataType === 'fieldInfo'">
                                     <label class="control-label">
-                                        نوع فیلد <i class="fa fa-i-cursor"></i>
                                     </label>
                                     <FieldInfo v-model="entity.extendeds[i].fieldInfo"></FieldInfo>
                                 </div>

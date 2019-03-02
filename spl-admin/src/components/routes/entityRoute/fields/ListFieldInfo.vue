@@ -3,35 +3,35 @@
         <div class="form-row align-items-center">
             <div class="col-sm-12">
                 <label for="source">منبع داده</label>
-                <input type="text" placeholder="منبع داده" class="form-control mb-2" id="source">
+                <input v-model="value.source" type="text" class="form-control mb-2" id="source">
             </div>
             <div class="col-sm-12">
                 <label for="View">View</label>
-                <input type="text" class="form-control mb-2" id="View">
+                <input v-model="value.view" type="text" class="form-control mb-2" id="View">
             </div>
             <div class="col-sm-12">
                 <label class="control-label">استایل نمایش:</label>
-                <select class="custom-select input-lg " style="">
-                    <option>Grid</option>
-                    <option>List</option>
+                <select v-model="value.style" class="custom-select input-lg " style="">
+                    <option value="grid">جدولی</option>
+                    <option value="list">لیستی</option>
                 </select>
             </div>
         </div>
         <div class="form-row">
             <div class="form-check form-check-inline">
-                <input type="checkbox" class="form-check-input" id="AutoExpand">
+                <input v-model="value.autoExpand" type="checkbox" class="form-check-input" id="AutoExpand">
                 <label class="form-check-label" for="AutoExpand">AutoExpand</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="checkbox" class="form-check-input" id="LimitToList">
+                <input v-model="value.limitToList" type="checkbox" class="form-check-input" id="LimitToList">
                 <label class="form-check-label" for="LimitToList">LimitToList</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="checkbox" class="form-check-input" id="ShowSelectall">
-                <label class="form-check-label" for="ShowSelectall">ShowSelectall</label>
+                <input v-model="value.showSelectAll" type="checkbox" class="form-check-input" id="ShowSelectAll">
+                <label class="form-check-label" for="ShowSelectAll">ShowSelectAll</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="checkbox" class="form-check-input" id="IsLoadOnStartup">
+                <input v-model="value.isLoadOnStartup" type="checkbox" class="form-check-input" id="IsLoadOnStartup">
                 <label class="form-check-label" for="IsLoadOnStartup">IsLoadOnStartup</label>
             </div>
         </div>
@@ -62,7 +62,8 @@
 
 <script>
     export default {
-        name: "ListFieldInfo"
+        name: "ListFieldInfo",
+        props:["value"]
     }
 </script>
 

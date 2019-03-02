@@ -27,10 +27,9 @@ export class entityModel {
             let _dbExt = _dbEntityExts.filter(db => db.ClassExID.toString() === p.id.toString())[0];
             let ext = new entityExtModel();
             ext.classExtModel = p;
-            if(_dbExt!=null){
-                _dbExt.Name = _dbExt.Value;
-                ext = new entityExtModel().deserialize(_dbExt,p);
-            }
+            if (_dbExt == null) _dbExt = {ID: null, Name: null, Value: null};
+            _dbExt.Name = _dbExt.Value;
+            ext = new entityExtModel().deserialize(_dbExt, p);
             this.extendeds.push(ext);
         }
     }
@@ -38,7 +37,7 @@ export class entityModel {
     getValueOfProperty(pid) {
         for (let ext of this.extendeds) {
             if (pid.toString() === ext.classExtModel.id.toString()) {
-                if(ext.classExtModel.dataType === 'fieldInfo')
+                if (ext.classExtModel.dataType === 'fieldInfo')
                     return ext.fieldInfo;
                 else
                     return ext.name;
@@ -50,9 +49,12 @@ export class entityModel {
         let str = [];
         for (let i in this.classModel.properties) {
             str.push(this.classModel.properties[i].id);
-            str.push(this.extendeds[i].name);
+            if (this.extendeds[i].classExtModel.dataType === 'fieldInfo')
+                str.push(JSON.stringify(this.extendeds[i].fieldInfo));
+            else
+                str.push(this.extendeds[i].name);
         }
-        return str.join('‰');
+        return str.join('†');
     }
 
     async insertUpdate() {
@@ -67,7 +69,7 @@ export class entityModel {
     isValid() {
         if (!this.name) return false;
         for (let i in this.classModel.properties) {
-            if (this.classModel.properties[i].dataType !=='fieldInfo' && this.classModel.properties[i].isRequired && !this.extendeds[i].name)
+            if (this.classModel.properties[i].dataType !== 'fieldInfo' && this.classModel.properties[i].isRequired && !this.extendeds[i].name)
                 return false;
         }
         return true;
