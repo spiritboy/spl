@@ -11,10 +11,13 @@
     export default {
         name: "Select2",
         props: ['options', 'value', 'api','apiState','multiple'],
-        mounted() {
+        async mounted() {
+            console.log(10);
             var vm = this;
-            selec2Conf.data=this.options;
+            selec2Conf.data = this.options;
+            console.log(this.options)
             if (this.api != null) {
+                console.log(1)
                 //selec2Conf.multiple = this.multiple === true;
                 selec2Conf.ajax = {
                     transport: function (params, success, failure) {
@@ -62,8 +65,20 @@
             },
             options: function (options) {
                 // update options
+                var vm = this;
                 selec2Conf.data=options;
-            }
+                $(this.$el)
+                // init select2
+                    .select2(selec2Conf)
+                    .val(this.value)
+                    .trigger('change')
+                    // emit event on change.
+                    .on('change', function () {
+                        let txt = $(this).select2('data')[0] == null ? '':$(this).select2('data')[0].text
+                        vm.$emit('input', this.value,txt)
+                    })
+                    .on('select2:select', function (e) {
+                    })            }
         },
         destroyed: function () {
             $(this.$el).off().select2('destroy')

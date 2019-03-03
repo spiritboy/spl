@@ -67,3 +67,15 @@ a.btn-icon{
     margin: 3px;
     cursor: pointer;
 }
+
+
+@media (min-width: 992px) {
+    .modal-x-lg {
+        max-width: 900px;
+    }
+}
+@media (min-width: 1366px) {
+    .modal-x-lg {
+        max-width: 1300px;
+    }
+}

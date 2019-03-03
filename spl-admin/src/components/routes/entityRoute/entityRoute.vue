@@ -204,20 +204,6 @@
             return context;
         },
         async mounted() {
-
-            this.isLoading = true;
-            let levelId = 4;
-            let clsId = await entityModel.getClsIdsByLevel(levelId);
-            this.newEntity = new entityModel(levelId, clsId, 3);
-            this.newEntity.name = 'Gender';
-            this.newEntity.id = 5;
-            await this.newEntity.initFull();
-            this.isLoading = false;
-            this.$refs.entityModal.show();
-
-            return ;
-
-
             $vm = this;
             this.doSearch();
         },

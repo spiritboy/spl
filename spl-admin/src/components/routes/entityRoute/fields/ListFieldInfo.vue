@@ -2,8 +2,12 @@
     <form style="max-width: 600px;">
         <div class="form-row align-items-center">
             <div class="col-sm-12">
-                <label for="source">منبع داده</label>
-                <input v-model="value.source" type="text" class="form-control mb-2" id="source">
+                <label>منبع داده</label>
+                <Select2 id="source"
+                         :key="2"
+                         :options="sources"
+                         v-model="value.source" >
+                </Select2>
             </div>
             <div class="col-sm-12">
                 <label for="View">View</label>
@@ -61,9 +65,24 @@
 </template>
 
 <script>
+    import {term} from "../../../../api/term";
+    import Select2 from "../../../shared/Select2";
+
     export default {
         name: "ListFieldInfo",
-        props:["value"]
+        components: {Select2},
+        data(){
+          return {
+              sources:[]
+          }
+        },
+        props:["value"],
+        async mounted(){
+            console.log(9)
+            this.sources = ((await term.ClassSelect(null, 100,1)).data.map(v=>{return {id:v.ID,text:v.Name}}));
+        },
+        methods:{
+        }
     }
 </script>
 

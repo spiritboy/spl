@@ -14,6 +14,9 @@
                         <li class="nav-item">
                             <router-link to="/entity" class="nav-link">ساختار منوها</router-link>
                         </li>
+                        <li class="nav-item">
+                            <router-link to="/algorithm" class="nav-link">تولید الگوریتم</router-link>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">ترمینولوژی</a>
                             <div class="dropdown-menu">

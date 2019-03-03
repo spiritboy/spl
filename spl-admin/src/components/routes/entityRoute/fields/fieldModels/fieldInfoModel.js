@@ -4,7 +4,7 @@ import {textFieldInfoModel} from "./textFieldInfoModel";
 
 export class fieldInfoModel {
     constructor() {
-        this._fieldType = 'text';
+        this._fieldType = null;
         this.font = new fontModel();
         this.tabStop = true;
         this.lock = false;
@@ -23,7 +23,6 @@ export class fieldInfoModel {
             this.custom = new listInfoModel();
         else if(v === 'text')
             this.custom = new textFieldInfoModel();
-
         this._fieldType = v;
     }
     deserialize(inp) {
@@ -47,7 +46,6 @@ export class fieldInfoModel {
             this.font = new fontModel().deserialize(inp.font);
         if (inp && inp.custom)
             this.custom.deserialize(inp.custom);
-
         return this;
     }
 }

@@ -33,14 +33,14 @@ export class termModel {
             str.push(this.classModel.properties[i].id);
             str.push(this.extendeds[i].id);
         }
-        return str.join(',');
+        return str.join('†');
     }
 
     async insertUpdate() {
         let dbMessage = await term.TermInsertUpdate(this.clsId, this.name, this.values, this.id);
         this.id = dbMessage.id;
         if (dbMessage.result === true) {
-            console.log(this.extendeds)
+            console.log(this.extendeds);
             this.propertiesString = this.extendeds.map(tExtModel => tExtModel.classExtModel.name + ':' + tExtModel.id).join();
         }
         return dbMessage;
@@ -55,7 +55,7 @@ export class termModel {
         return true;
     }
 
-    async delete() {
+    async remove() {
         return await term.TermDelete(this.id);
     }
 

@@ -137,8 +137,6 @@
                 this.similarProperties = [];
                 //this.selectedSimilar = null
                 $(this.$refs.modal).modal('show');
-                if (this.entity && this.entity.name)
-                    this.nameChanged();
             },
             async doSearchTerms(q, pp, pn, state) {
                 return term.TermSelect(state, q, pp, pn);

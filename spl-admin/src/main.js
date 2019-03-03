@@ -6,6 +6,7 @@ import flowRoute from './components/routes/flowRoute/flowRoute'
 import classRoute from './components/routes/termRoute/classRoute'
 import termRoute from './components/routes/termRoute/termRoute'
 import entityRoute from './components/routes/entityRoute/entityRoute'
+import algorithmRoute from './components/routes/algorithmRoute/algorithmRoute'
 import Popover  from 'vue-js-popover'
 import './directives/directives'
 Vue.config.productionTip = false;
@@ -15,6 +16,7 @@ const routes = [
     { path: '/entity', component: entityRoute },
     { path: '/term/term', component: termRoute },
     { path: '/term/class', component: classRoute },
+    { path: '/algorithm', component: algorithmRoute },
 ];
 const router = new VueRouter({
     mode:'history',
