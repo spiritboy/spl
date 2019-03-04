@@ -19,3 +19,5 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+spl-admin/src/components/routes/flowRoute/flowRoute.vue
+spl-admin/src/components/routes/flowRoute/flowRoute.vue

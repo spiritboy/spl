@@ -11,9 +11,7 @@
     import QuestionSelectorComponent from "./QuestionSelectorComponent";
     import ExpansionPanelComponent from "./ExpansionPanelComponent";
     let data = {category: null};
-    spl.menu(123).then(function (response) {
-        data.category = response.data.menu.categories[1];
-    });
+
     export default {
         name: 'flowRoute',
         components: {
@@ -23,6 +21,11 @@
         },
         data() {
             return data;
+        },
+        created() {
+            spl.menu(123).then(function (response) {
+                data.category = response.data.menu.categories[1];
+            });
         }
     }
 </script>
