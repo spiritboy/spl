@@ -22,6 +22,10 @@ export class methodModel {
             return methodModel.methodsCache;
     }
 
+    static async getNavigate(catId) {
+        return (await algorithm.Navigate(catId)).data;
+    }
+
     deserialize(inp) {
         if (!inp) return null;
         this.id = inp.Id;
