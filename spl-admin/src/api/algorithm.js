@@ -11,4 +11,8 @@ export class algorithm {
             return algorithm.selectMethodsCache;
 
     }
+
+    static async Navigate(categoryId) {
+        return await axios.get(config.webApi + '/api/v1/algorithm/Navigate/' + categoryId);
+    }
 }
