@@ -2,6 +2,7 @@ export class ioModel {
     constructor() {
         this.name = null;
         this.dataType = null;
+        this.value = null;
     }
     deserialize(inp){
         this.name = inp.Name;

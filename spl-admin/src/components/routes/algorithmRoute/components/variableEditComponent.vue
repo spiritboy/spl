@@ -1,6 +1,6 @@
 <template>
     <div>
-        نام متغیر:<input/>
+        نام متغیر:<input v-model="variable.name"/>
         <div class="row" style="border: 1px solid lightgray;padding: 10px;">
             <div class="col-3">
                 <ul class="navigate">
@@ -9,41 +9,48 @@
                     </li>
                 </ul>
                 <ul class="navigate">
-                    <li v-for="entity in navigate.filter(e=>e.ParentID === currentCategoryID && e.ID !== currentGroupID)">
-                        <span :class="entity.EntityType">{{entity.Name}}</span>
+                    <li v-for="group in navigate.filter(e=>e.ParentID === currentCategoryID && e.ID !== currentGroupID)">
+                        <span :class="group.EntityType">{{group.Name}}</span>
                         <ul class="navigate">
-                            <li v-for="entity2 in navigate.filter(e=>e.ParentID === entity.ID && e.ID !== currentGroupID)">
-                                <span :class="entity2.EntityType">{{entity2.Name}}</span>
+                            <li v-for="attribute in navigate.filter(e=>e.ParentID === group.ID && e.ID !== currentGroupID)"
+                                @click="navigateClicked(attribute)">
+                                <span :class="attribute.EntityType">{{attribute.Name}}</span>
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
-            <div class="col-3">
-                <div v-if="selectedMethod!=null">
-                    <h2>خروجی ها</h2>
-                    {{selectedMethod.isArray}}
-                    <ul class="methods">
-                        <li v-for="output in selectedMethod.output">{{output.name}}</li>
-                    </ul>
+            <div class="col-6">
+                <div class="col-12">
+                    <div v-if="variable.method!=null">
+                        <h2>ورودی ها</h2>
+                        <ul class="methods">
+                            <li v-for="input in variable.method.input"
+                                :class="{'active':selectedInput === input}"
+                                @click="inputClicked(input)">
+                                <span>{{input.name}}</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="col-3">
-                <div v-if="selectedMethod!=null">
-                    <h2>ورودی ها</h2>
-                    <ul class="methods">
-                        <li v-for="input in selectedMethod.input">{{input}}</li>
-                    </ul>
+                <div class="col-12">
+                    <div v-if="variable.method!=null">
+                        <h2>خروجی ها</h2>
+                        {{variable.method.isArray}}
+                        <ul class="methods">
+                            <li v-for="output in variable.method.output">{{output.name}}</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="col-3" style="direction: ltr">
-                <ul class="method-categories">
+                <ul class="method-non-api">
                     <li v-for="category in methods_nonApiCategories">
                         <span class="title">{{category}}</span>
                         <ul class="methods">
-                            <li @click="selectedMethod = nonApi"
+                            <li @click="variable.method = nonApi"
                                 v-for="nonApi in methods_nonApi.filter(m=>m.methodCategory === category)"
-                                :class="{'active':selectedMethod === nonApi}">{{nonApi.name}}
+                                :class="{'active':variable.method === nonApi}">{{nonApi.name}}
                             </li>
                         </ul>
                     </li>
@@ -52,15 +59,16 @@
                     <li>
                         <span class="title">API</span>
                         <ul class="methods">
-                            <li @click="selectedMethod = Api"
+                            <li @click="variable.method = Api"
                                 v-for="Api in methods_Api"
-                                :class="{'active':selectedMethod === Api}">{{Api.name}}
+                                :class="{'active':variable.method === Api}">{{Api.name}}
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
+        {{variable}}
     </div>
 </template>
 
@@ -70,6 +78,7 @@
 
     export default {
         name: "variableEditComponent",
+        props:["variable"],
         data() {
             return {
                 methods_nonApi: [],
@@ -79,7 +88,7 @@
                 currentAttributeID: 281,
                 currentGroupID: 279,
                 currentCategoryID: 274,
-                selectedMethod: null
+                selectedInput:null
 
             }
         },
@@ -97,12 +106,18 @@
 
 
         },
-        methods: {}
+        methods: {
+            inputClicked(input){
+                this.selectedInput = input;
+            },
+            navigateClicked(attribute){
+            }
+        }
     }
 </script>
 
 <style scoped>
-    ul.method-categories, ul.method-api {
+    ul.method-non-api, ul.method-api {
         text-align: left;
         border: 1px solid lightgray;
         padding: 5px;
@@ -119,12 +134,20 @@
         padding: 0;
         margin: 3px 3px 3px 15px;
     }
+    ul.methods li{
+        padding: 5px;
+        border: 1px dashed gray;
+        margin: 3px;
+    }
 
-    ul.method-categories li, ul.method-api li {
+    ul.methods li:hover {
+        background: #bfd5ff;
+    }
+    ul.method-non-api li, ul.method-api li {
         margin-left: 0;
     }
 
-    ul.method-categories .title, ul.method-api .title {
+    ul.method-non-api .title, ul.method-api .title {
         display: block;
         border-bottom: 1px solid;
         width: 100%;
