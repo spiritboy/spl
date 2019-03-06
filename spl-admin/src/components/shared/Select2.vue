@@ -1,5 +1,5 @@
 <template>
-    <select>
+    <select ref="el">
         <slot></slot>
     </select>
 </template>
@@ -12,12 +12,11 @@
         name: "Select2",
         props: ['options', 'value', 'api','apiState','multiple'],
         async mounted() {
-            console.log(10);
-            var vm = this;
+            console.log($(this.$refs.el))
+            let vm = this;
             selec2Conf.data = this.options;
-            console.log(this.options)
             if (this.api != null) {
-                console.log(1)
+                console.log('api set');
                 //selec2Conf.multiple = this.multiple === true;
                 selec2Conf.ajax = {
                     transport: function (params, success, failure) {
@@ -43,7 +42,7 @@
                     },
                 }
             }
-            $(this.$el)
+            $(this.$refs.el)
                 // init select2
                 .select2(selec2Conf)
                 .val(this.value)
@@ -59,15 +58,17 @@
         watch: {
             value: function (value) {
                 // update value
-                $(this.$el)
+                $(this.$refs.el)
                     .val(value)
                     .trigger('change')
             },
             options: function (options) {
+                console.log(options);
+
                 // update options
-                var vm = this;
+                let vm = this;
                 selec2Conf.data=options;
-                $(this.$el)
+                $(this.$refs.el)
                 // init select2
                     .select2(selec2Conf)
                     .val(this.value)
@@ -78,10 +79,10 @@
                         vm.$emit('input', this.value,txt)
                     })
                     .on('select2:select', function (e) {
-                    })            }
+                    })}
         },
         destroyed: function () {
-            $(this.$el).off().select2('destroy')
+            $(this.$refs.el).off().select2('destroy');
         }
     }
 </script>

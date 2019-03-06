@@ -4,7 +4,8 @@
         <div class="row" style="border: 1px solid lightgray;padding: 10px;">
             <div class="col-3">
                 <ul class="navigate">
-                    <li v-for="entity in navigate.filter(e=>e.ParentID === currentGroupID || e.ID === currentGroupID)">
+                    <li v-for="entity in navigate.filter(e=>e.ParentID === currentGroupID || e.ID === currentGroupID)"
+                        @click="navigateClicked(entity)">
                         <span :class="[entity.EntityType,{'active':currentAttributeID === entity.ID}]">{{entity.Name}}</span>
                     </li>
                 </ul>
@@ -28,7 +29,8 @@
                             <li v-for="input in variable.method.input"
                                 :class="{'active':selectedInput === input}"
                                 @click="inputClicked(input)">
-                                <span>{{input.name}}</span>
+                                <span class="m-1" style="display: block;">{{input.name}}</span>
+                                <span class="badge badge-light m-1" v-for="disp in input.display">{{disp}}</span>
                             </li>
                         </ul>
                     </div>
@@ -48,7 +50,7 @@
                     <li v-for="category in methods_nonApiCategories">
                         <span class="title">{{category}}</span>
                         <ul class="methods">
-                            <li @click="variable.method = nonApi"
+                            <li @click="methodsClicked(nonApi)"
                                 v-for="nonApi in methods_nonApi.filter(m=>m.methodCategory === category)"
                                 :class="{'active':variable.method === nonApi}">{{nonApi.name}}
                             </li>
@@ -59,7 +61,7 @@
                     <li>
                         <span class="title">API</span>
                         <ul class="methods">
-                            <li @click="variable.method = Api"
+                            <li @click="methodsClicked(Api)"
                                 v-for="Api in methods_Api"
                                 :class="{'active':variable.method === Api}">{{Api.name}}
                             </li>
@@ -107,10 +109,17 @@
 
         },
         methods: {
+            methodsClicked(method){
+                this.variable.method = method;
+                this.selectedInput = null;
+            },
             inputClicked(input){
                 this.selectedInput = input;
             },
-            navigateClicked(attribute){
+            navigateClicked(entity){
+                if(this.selectedInput!=null){
+                    this.selectedInput.addValue(entity);
+                }
             }
         }
     }

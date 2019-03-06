@@ -57,6 +57,7 @@
                                              :multiple="entity.extendeds[i].classExtModel.isMultiSelect"
                                              :options="[{id:entity.extendeds[i].id,text:entity.extendeds[i].name}]"
                                              :api="doSearchTerms"
+                                             :key="'lookup'+i.toString()"
                                              :apiState="entity.extendeds[i].classExtModel.clsId"/>
                                 </div>
                             </div>
@@ -139,6 +140,7 @@
                 $(this.$refs.modal).modal('show');
             },
             async doSearchTerms(q, pp, pn, state) {
+                console.log(111111)
                 return term.TermSelect(state, q, pp, pn);
             },
             async popUpOkClicked() {

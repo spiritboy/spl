@@ -4,10 +4,11 @@
             <div class="col-sm-12">
                 <label>منبع داده</label>
                 <Select2 id="source"
-                         :key="2"
+                         :key="'aaaaaa'"
                          :options="sources"
                          v-model="value.source" >
                 </Select2>
+                {{sources}}
             </div>
             <div class="col-sm-12">
                 <label for="View">View</label>
@@ -78,8 +79,8 @@
         },
         props:["value"],
         async mounted(){
-            console.log(9)
             this.sources = ((await term.ClassSelect(null, 100,1)).data.map(v=>{return {id:v.ID,text:v.Name}}));
+            console.log(this.sources)
         },
         methods:{
         }
