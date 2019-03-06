@@ -3,6 +3,14 @@
         نام متغیر:<input v-model="variable.name"/>
         <div class="row" style="border: 1px solid lightgray;padding: 10px;">
             <div class="col-3">
+                <div class="row">
+                    <div class="col-9">
+                    <input class="form-control mr-sm-2"  type="text" placeholder="اضافه کردن مقدار ثابت ..." aria-label="Search">
+                    </div>
+                    <div class="col-2">
+                    <button class="btn"  ><i class="fas fa-arrow-circle-left"></i></button>
+                    </div>
+                </div>
                 <ul class="navigate">
                     <li v-for="entity in navigate.filter(e=>e.ParentID === currentGroupID || e.ID === currentGroupID)"
                         @click="navigateClicked(entity)">
@@ -29,8 +37,11 @@
                             <li v-for="input in variable.method.input"
                                 :class="{'active':selectedInput === input}"
                                 @click="inputClicked(input)">
-                                <span class="m-1" style="display: block;">{{input.name}}</span>
-                                <span class="badge badge-light m-1" v-for="disp in input.display">{{disp}}</span>
+
+                                <span class="m-1" style="display: block;">{{input.paramDisplay}}</span>
+
+                                <span class="badge badge-light m-1" v-for="disp in input.valueDisplay">{{disp}}</span>
+
                             </li>
                         </ul>
                     </div>
@@ -91,7 +102,6 @@
                 currentGroupID: 279,
                 currentCategoryID: 274,
                 selectedInput:null
-
             }
         },
         async mounted() {
@@ -121,6 +131,8 @@
                     this.selectedInput.addValue(entity);
                 }
             }
+
+
         }
     }
 </script>

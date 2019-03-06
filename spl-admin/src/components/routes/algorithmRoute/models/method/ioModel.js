@@ -1,25 +1,31 @@
 export class ioModel {
     constructor() {
-        this.display = null;
+
         this.paramName = null;
-        this.name = null;
+        this.paramDisplay = null;
         this.dataType = null;
         this.isArray = false;
-        this.value = [];
-        this.display = [];
+        this.defaultValue=null;
+        this.valueName = [];
+        this.valueDisplay = [];
     }
     addValue(entity){
         if(this.isArray === false) {
-            this.value = [];
-            this.display = [];
+            this.valueName = [];
+            this.valueDisplay = [];
         }
-        this.value.push(entity.PathID);
-        this.display.push(entity.PathName);
+
+
+        this.valueName.push(entity.PathID);
+        this.valueDisplay.push(entity.PathName);
     }
     deserialize(inp){
-        this.display = inp.Display;
+        this.paramDisplay=inp.ParamDisplay;
         this.paramName = inp.ParamName;
         this.dataType = inp.DataType;
+        this.valueName = inp.ValueName;
+        this.valueDisplay=inp.ValueDisplay;
+
         return this;
     }
 }

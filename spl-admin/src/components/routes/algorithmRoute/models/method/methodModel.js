@@ -32,6 +32,7 @@ export class methodModel {
         this.name = inp.Name;
         this.methodValue = inp.MethodValue;
         this.methodCategory = inp.MethodCategory;
+
         this.input = JSON.parse(inp.Input).map(d => new ioModel().deserialize(d));
         this.output = JSON.parse(inp.Output).map(d => new ioModel().deserialize(d));
         this.isArray = inp.IsArray;
